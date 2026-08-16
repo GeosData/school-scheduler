@@ -171,9 +171,10 @@ def solve(cfg):
     model.Minimize(100 * sum(repeats) + sum(holes))
 
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 20
+    solver.parameters.max_time_in_seconds = float(sys.argv[2]) if len(sys.argv) > 2 else 20
     solver.parameters.num_search_workers = 8
     status = solver.Solve(model)
+    print(f"Sesiones: {len(sessions)}  |  variables place: {len(place)}  |  tiempo: {solver.WallTime():.1f}s")
 
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         print("SIN SOLUCION:", solver.StatusName(status))
