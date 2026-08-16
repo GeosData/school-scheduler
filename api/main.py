@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from engine import solve
+from engine import solve, validate
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "web", "dist")
@@ -22,12 +22,14 @@ def example():
 
 
 @app.post("/api/solve")
-async def do_solve(cfg: dict):
+def do_solve(cfg: dict):
+    problems = validate(cfg)
+    if problems:
+        return {"status": "INVALID", "message": "Revisa la configuración antes de generar:", "problems": problems}
     try:
-        result = solve(cfg, time_limit=float(cfg.get("_timeLimit", 30)))
+        return solve(cfg, time_limit=float(cfg.get("_timeLimit", 30)))
     except KeyError as e:
         return JSONResponse(status_code=400, content={"status": "ERROR", "message": f"Falta o no coincide: {e}"})
-    return result
 
 
 if os.path.isdir(DIST):

@@ -50,7 +50,7 @@ export function Inicio() {
           <button className="btn btn-accent" disabled={solving || !subjects.length} onClick={() => solve(20)}>{solving ? "Generando…" : "Ver un horario de ejemplo"}</button>
           <button className="btn btn-ghost" onClick={() => setView("importar")}>Cargar mis datos (Excel)</button>
         </div>
-        {error && <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-danger">{error}</p>}
+        {error && <p className="mt-3 whitespace-pre-line rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-ink">{error}</p>}
         {!subjects.length && !error && <p className="mt-3 text-sm text-muted">Cargando el colegio de ejemplo…</p>}
       </div>
     </section>
@@ -381,9 +381,7 @@ export function Generar() {
       <button className="btn btn-accent" onClick={() => solve(30)} disabled={solving || !ready}>{solving ? "Generando…" : "Generar horario"}</button>
       {!ready && <p className="mt-2 text-sm text-muted">Faltan datos. Complétalos en las secciones del menú, o usa Importar Excel.</p>}
       {error && (
-        <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm">
-          <b className="text-danger">No se pudo generar.</b> {error}
-        </div>
+        <div className="mt-4 whitespace-pre-line rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-ink">{error}</div>
       )}
       {result && !error && (
         <div className="mt-4 rounded-xl border border-line bg-[#f4fbf6] p-4 text-sm">

@@ -1,6 +1,54 @@
 from ortools.sat.python import cp_model
 
 
+def validate(cfg):
+    problems, seen = [], set()
+
+    def add(msg):
+        if msg not in seen:
+            seen.add(msg)
+            problems.append(msg)
+
+    subjects = cfg.get("subjects", {})
+    teachers = cfg.get("teachers", {})
+    groups = set(cfg.get("groups", []))
+    room_types = cfg.get("roomTypes", {})
+    days = cfg.get("days", [])
+    P = int(cfg.get("periodsPerDay", 0) or 0)
+    slots = len(days) * P
+
+    for t in cfg.get("tasks", []):
+        if t.get("subject") not in subjects:
+            add(f"Una carga usa la materia «{t.get('subject')}» que no está en Materias.")
+        if t.get("teacher") not in teachers:
+            add(f"Una carga usa el docente «{t.get('teacher')}» que no está en Docentes.")
+        if t.get("group") not in groups:
+            add(f"Una carga usa el grupo «{t.get('group')}» que no está en Grupos.")
+
+    for name, s in subjects.items():
+        allowed = [rt for rt in s.get("allowedRoomTypes", []) if room_types.get(rt, 0) > 0]
+        if not allowed:
+            add(f"La materia «{name}» no tiene ningún tipo de salón disponible (revisa Salones y los tipos permitidos).")
+
+    load = {}
+    for t in cfg.get("tasks", []):
+        load[t.get("group")] = load.get(t.get("group"), 0) + int(t.get("weekly", 0) or 0)
+    for g, h in load.items():
+        if g in groups and slots and h > slots:
+            add(f"El grupo «{g}» tiene {h} horas semanales, pero la jornada solo tiene {slots} franjas ({len(days)} días × {P} horas). Sube las horas por día o baja la carga.")
+
+    tload = {}
+    for t in cfg.get("tasks", []):
+        tload[t.get("teacher")] = tload.get(t.get("teacher"), 0) + int(t.get("weekly", 0) or 0)
+    for tname, te in teachers.items():
+        limit = te.get("notAfterPeriod")
+        avail = (limit if limit is not None else P) * len(days)
+        if avail and tload.get(tname, 0) > avail:
+            add(f"El docente «{tname}» tiene {tload.get(tname)} horas asignadas pero solo {avail} disponibles (por su tope de horario). Baja su carga o sube su tope.")
+
+    return problems
+
+
 def build_segments(periods, break_after):
     segments, cur = [], []
     for p in range(periods):
@@ -24,7 +72,7 @@ def sessions_of(weekly, block):
 
 def teacher_available(teacher, period):
     limit = teacher.get("notAfterPeriod")
-    return limit is None or period <= limit
+    return limit is None or period < limit
 
 
 def solve(cfg, time_limit=30.0):
@@ -200,6 +248,7 @@ def solve(cfg, time_limit=30.0):
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit
     solver.parameters.num_search_workers = 8
+    solver.parameters.random_seed = 1
     status = solver.Solve(model)
 
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):

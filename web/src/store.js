@@ -113,7 +113,8 @@ export const useStore = create((set, get) => ({
     cfg._timeLimit = timeLimit;
     try {
       const data = await (await fetch("/api/solve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cfg) })).json();
-      if (data.status === "INFEASIBLE" || data.status === "ERROR") set({ error: data.message || "No se pudo generar.", solving: false });
+      if (data.status === "INVALID") set({ error: data.message + "\n• " + (data.problems || []).join("\n• "), solving: false });
+      else if (data.status === "INFEASIBLE" || data.status === "ERROR") set({ error: data.message || "No se pudo generar.", solving: false });
       else set({ result: data, solving: false, view: "horario" });
     } catch (e) {
       set({ error: "No se pudo conectar con el motor de horarios. Revisa que la aplicación siga abierta e inténtalo de nuevo.", solving: false });

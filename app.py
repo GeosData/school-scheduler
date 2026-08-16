@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from engine import solve
+from engine import solve, validate
 
 
 def resource(*parts):
@@ -28,7 +28,10 @@ def example():
 
 
 @app.post("/api/solve")
-async def do_solve(cfg: dict):
+def do_solve(cfg: dict):
+    problems = validate(cfg)
+    if problems:
+        return {"status": "INVALID", "message": "Revisa la configuración antes de generar:", "problems": problems}
     try:
         return solve(cfg, time_limit=float(cfg.get("_timeLimit", 30)))
     except KeyError as e:
