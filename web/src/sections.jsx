@@ -47,9 +47,10 @@ export function Inicio() {
       <div className="rounded-xl border border-line bg-[#f4fbf6] p-4">
         <p className="mb-3 text-sm text-muted">Ya cargamos un <b>colegio de ejemplo</b> para que veas cómo queda. Genéralo con un clic, y luego reemplázalo con los datos de tu colegio.</p>
         <div className="flex flex-wrap gap-2">
-          <button className="btn btn-accent" disabled={solving || !subjects.length} onClick={() => solve(20)}>{solving ? "Generando…" : "Ver un horario de ejemplo"}</button>
+          <button className="btn btn-accent" disabled={solving || !subjects.length} onClick={() => solve(20)}>{solving ? "Armando el horario…" : "Ver un horario de ejemplo"}</button>
           <button className="btn btn-ghost" onClick={() => setView("importar")}>Cargar mis datos (Excel)</button>
         </div>
+        {solving && <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" /> Armando el horario sin choques, unos segundos…</p>}
         {error && <p className="mt-3 whitespace-pre-line rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-ink">{error}</p>}
         {!subjects.length && !error && <p className="mt-3 text-sm text-muted">Cargando el colegio de ejemplo…</p>}
       </div>
@@ -61,7 +62,7 @@ export function Rejilla() {
   const { grid, setGrid, toggleBreak } = useStore();
   return (
     <section className="card">
-      <Head title="Rejilla y jornada" hint="Todo se genera desde acá: nada está fijo en el programa." />
+      <Head title="Jornada y horas" hint="La estructura del día: a qué hora empieza, cuánto dura cada hora, cuántas al día y los descansos. Todo el horario se calcula desde acá." />
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="block"><span className="text-sm text-muted">Hora de inicio<Tip text="A qué hora empieza la jornada. Con esto y la duración de la hora se calculan los horarios reales (7:00–7:55…)." /></span>
           <input className="input mt-1" type="time" value={grid.startTime} onChange={(e) => setGrid({ startTime: e.target.value })} />
@@ -89,7 +90,7 @@ export function Rejilla() {
             </button>
           ))}
         </div>
-        <p className="mt-2 text-xs text-muted">Marca tras cuáles horas hay recreo. Un bloque no se parte por un descanso.</p>
+        <p className="mt-2 text-xs text-muted">Marca tras cuáles horas hay recreo. Una clase de horas seguidas no se parte por un descanso.</p>
       </div>
       <div className="mt-5 flex items-center gap-3 rounded-xl border border-line bg-[#fbfdff] p-3">
         <button onClick={() => setGrid({ allowFreePeriods: !grid.allowFreePeriods })}
@@ -142,10 +143,10 @@ export function Materias() {
           <div key={i} className="rounded-xl border border-line bg-[#fbfdff] p-3">
             <div className="flex items-center gap-2">
               <input className="input" placeholder="Nombre de la materia" value={s.name} onChange={(e) => upd(i, { name: e.target.value })} />
-              <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Bloque<Tip text="Horas seguidas. 0 = suelta. 2 = va de a dos horas juntas (típico en química, física, matemáticas). Un bloque no se parte por un descanso." />
+              <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Horas seguidas<Tip text="0 = la clase va suelta. 2 = va de a dos horas juntas (típico en química, física, matemáticas). No se parte por un descanso." />
                 <input className="input !w-16" type="number" min="0" value={s.block} onChange={(e) => upd(i, { block: e.target.value })} />
               </label>
-              <button className={"shrink-0 rounded-full px-2.5 py-1.5 text-xs font-semibold transition " + (s.heavy ? "bg-primary text-white" : "bg-slate-100 text-muted hover:bg-slate-200")} onClick={() => upd(i, { heavy: !s.heavy })} title="Materia pesada: preferir horas tempranas">Pesada</button>
+              <button className={"shrink-0 rounded-full px-2.5 py-1.5 text-xs font-semibold transition " + (s.heavy ? "bg-primary text-white" : "bg-slate-100 text-muted hover:bg-slate-200")} onClick={() => upd(i, { heavy: !s.heavy })} title="Materia exigente: se prefiere ponerla en las primeras horas">Exigente</button>
               <X onClick={() => set2("subjects", subjects.filter((_, j) => j !== i))} />
             </div>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -214,6 +215,9 @@ export function Cargas() {
   return (
     <section className="card">
       <Head title="Cargas académicas" hint="Quién dicta qué materia a qué grupo, y cuántas horas por semana." />
+      {(!teachers.length || !subjects.length || !groups.length) && (
+        <p className="mb-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-ink">Para crear cargas, primero agrega <b>docentes</b>, <b>materias</b> y <b>grupos</b> en sus secciones (o usa Importar Excel).</p>
+      )}
       <div className="grid grid-cols-[1fr_1fr_1fr_6rem_auto] items-center gap-2">
         <span className="th">Docente</span><span className="th">Materia</span><span className="th">Grupo</span><span className="th">Horas/sem</span><span></span>
         {tasks.map((t, i) => (
@@ -316,7 +320,7 @@ const RULES = [
   { id: "noRepeatSameDay", label: "No repetir materia el mismo día", hint: "Evita que un grupo vea la misma materia dos veces en un día." },
   { id: "groupGaps", label: "Grupos sin huecos", hint: "Clases corridas, sin horas libres entre medio para los estudiantes." },
   { id: "teacherGaps", label: "Docentes sin huecos", hint: "Minimiza las horas libres de los docentes entre clases." },
-  { id: "heavyEarly", label: "Materias pesadas temprano", hint: "Prefiere las materias marcadas como 'Pesada' en las primeras horas." },
+  { id: "heavyEarly", label: "Materias exigentes temprano", hint: "Prefiere las materias marcadas como 'Exigente' en las primeras horas del día." },
 ];
 const PRIOS = { Baja: 2, Media: 10, Alta: 50 };
 const prioOf = (w) => (w >= 30 ? "Alta" : w >= 6 ? "Media" : "Baja");
@@ -378,7 +382,8 @@ export function Generar() {
           ))}
         </div>
       </div>
-      <button className="btn btn-accent" onClick={() => solve(30)} disabled={solving || !ready}>{solving ? "Generando…" : "Generar horario"}</button>
+      <button className="btn btn-accent" onClick={() => solve(30)} disabled={solving || !ready}>{solving ? "Armando el horario…" : "Generar horario"}</button>
+      {solving && <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" /> Armando el horario sin choques, esto puede tomar unos segundos…</p>}
       {!ready && <p className="mt-2 text-sm text-muted">Faltan datos. Complétalos en las secciones del menú, o usa Importar Excel.</p>}
       {error && (
         <div className="mt-4 whitespace-pre-line rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-ink">{error}</div>

@@ -3,6 +3,7 @@ import { useStore } from "./store";
 import { Inicio, Importar, Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Preferencias, Generar } from "./sections.jsx";
 import Timetable from "./Timetable.jsx";
 import Tutorial from "./Tutorial.jsx";
+import Toaster from "./Toaster.jsx";
 
 const NAV = [
   {
@@ -16,7 +17,7 @@ const NAV = [
     group: "1 · Datos del colegio",
     items: [
       { id: "importar", label: "Importar Excel" },
-      { id: "rejilla", label: "Rejilla y jornada" },
+      { id: "rejilla", label: "Jornada y horas" },
       { id: "salones", label: "Salones" },
       { id: "materias", label: "Materias" },
       { id: "docentes", label: "Docentes" },
@@ -34,7 +35,7 @@ const LABEL = Object.fromEntries(NAV.flatMap((s) => s.items).map((n) => [n.id, n
 const SECTIONS = { inicio: Inicio, importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, preferencias: Preferencias, generar: Generar, horario: Timetable };
 
 export default function App() {
-  const { view, setView, loadExample, openTutorial, levels, activeId, selectLevel, addLevel, renameLevel, removeLevel, loadWorkspace, exportProject, importProject } = useStore();
+  const { view, setView, loadExample, openTutorial, levels, activeId, selectLevel, addLevel, renameLevel, removeLevel, loadWorkspace, exportProject, importProject, lastSaved } = useStore();
   useEffect(() => {
     (async () => {
       const restored = await loadWorkspace();
@@ -50,8 +51,9 @@ export default function App() {
   return (
     <div className="grid min-h-screen md:grid-cols-[260px_1fr]">
       <Tutorial />
+      <Toaster />
       <button onClick={openTutorial} title="Guía rápida"
-        className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-dark">
+        className="no-print fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-dark">
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.7M12 17h.01" /></svg>
         Guía
       </button>
@@ -99,7 +101,7 @@ export default function App() {
               <input type="file" accept=".json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) importProject(f); e.target.value = ""; }} />
             </label>
           </div>
-          <div className="mt-1 px-1 text-[10px] text-muted">Se guarda solo; usa "Guardar copia" para respaldar o mover a otro PC.</div>
+          <div className="mt-1 px-1 text-[10px] text-muted">{lastSaved ? `Guardado ✓ ${lastSaved}` : "Se guarda solo."} · usa "Guardar copia" para respaldar.</div>
         </div>
       </nav>
       <main className="p-5 md:p-8">

@@ -14,6 +14,7 @@ const blankData = () => ({
   result: null, error: "",
 });
 const newId = () => "n" + Math.random().toString(36).slice(2, 7);
+let _toastId = 0;
 
 export const useStore = create((set, get) => ({
   levels: [{ id: "n1", name: "Secundaria" }],
@@ -23,8 +24,17 @@ export const useStore = create((set, get) => ({
   ...blankData(),
   solving: false,
   hydrated: false,
+  toasts: [],
+  lastSaved: null,
   view: "inicio",
   tutorial: typeof localStorage !== "undefined" && !localStorage.getItem("hs_tutorial_seen"),
+
+  pushToast: (message, kind = "ok") => {
+    const id = ++_toastId;
+    set((s) => ({ toasts: [...s.toasts, { id, message, kind }] }));
+    setTimeout(() => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })), 2600);
+  },
+  dismissToast: (id) => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
 
   openTutorial: () => set({ tutorial: true }),
   closeTutorial: () => {
@@ -53,6 +63,7 @@ export const useStore = create((set, get) => ({
     if (!get().hydrated) return;
     try {
       await fetch("/api/workspace", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: get().buildWorkspace() }) });
+      set({ lastSaved: new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }) });
     } catch (e) { /* offline */ }
   },
   loadWorkspace: async () => {
@@ -68,13 +79,15 @@ export const useStore = create((set, get) => ({
     a.download = "proyecto-horarios.json";
     a.click();
     URL.revokeObjectURL(a.href);
+    get().pushToast("Copia descargada", "ok");
   },
   importProject: async (file) => {
     try {
       const ok = get().restoreWorkspace(JSON.parse(await file.text()));
-      if (ok) get().saveWorkspace();
+      if (ok) { get().saveWorkspace(); get().pushToast("Proyecto abierto", "ok"); }
+      else get().pushToast("El archivo no es un proyecto válido", "error");
       return ok;
-    } catch (e) { return false; }
+    } catch (e) { get().pushToast("No se pudo abrir el archivo", "error"); return false; }
   },
   selectLevel: (id) => {
     const s = get();
@@ -156,7 +169,7 @@ export const useStore = create((set, get) => ({
       const data = await (await fetch("/api/solve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cfg) })).json();
       if (data.status === "INVALID") set({ error: data.message + "\n• " + (data.problems || []).join("\n• "), solving: false });
       else if (data.status === "INFEASIBLE" || data.status === "ERROR") set({ error: data.message || "No se pudo generar.", solving: false });
-      else set({ result: data, solving: false, view: "horario" });
+      else { set({ result: data, solving: false, view: "horario" }); get().pushToast("Horario listo", "ok"); }
     } catch (e) {
       set({ error: "No se pudo conectar con el motor de horarios. Revisa que la aplicación siga abierta e inténtalo de nuevo.", solving: false });
     }

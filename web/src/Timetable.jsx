@@ -7,6 +7,7 @@ function colorFor(name, keys) {
   return PALETTE[(i < 0 ? 0 : i) % PALETTE.length];
 }
 
+const STATUS = { OPTIMAL: "Óptimo", FEASIBLE: "Válido (se puede mejorar)" };
 function fmt(mins) { const h = Math.floor(mins / 60), m = mins % 60; return `${h}:${String(m).padStart(2, "0")}`; }
 function computeTimes(result) {
   const [sh, sm] = (result.startTime || "07:00").split(":").map(Number);
@@ -148,19 +149,20 @@ export default function Timetable() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold">Horario · {current}</h2>
-          <p className="text-sm text-muted">{result.status} en {result.seconds}s · hora de {result.periodMinutes} min{mode === "group" && data.holes != null ? ` · ${data.holes} huecos` : ""}</p>
+          <p className="text-sm text-muted">{STATUS[result.status] || result.status} · generado en {result.seconds}s · hora de {result.periodMinutes} min{mode === "group" && data.holes != null ? ` · ${data.holes} huecos` : ""}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="no-print flex flex-wrap gap-2">
           <div className="flex rounded-full bg-slate-100 p-1 text-sm font-semibold">
             <button className={"rounded-full px-3 py-1 " + (mode === "group" ? "bg-white text-primary-dark shadow" : "text-muted")} onClick={() => { setMode("group"); setSel(null); }}>Por grupo</button>
             <button className={"rounded-full px-3 py-1 " + (mode === "teacher" ? "bg-white text-primary-dark shadow" : "text-muted")} onClick={() => { setMode("teacher"); setSel(null); }}>Por docente</button>
           </div>
           <button className="btn btn-primary text-sm" onClick={exportImage}>Exportar imagen</button>
+          <button className="btn btn-ghost text-sm" onClick={() => window.print()}>Imprimir</button>
           <button className="btn btn-ghost text-sm" onClick={exportCSV}>CSV</button>
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 no-print">
         {keys.length > 12 ? (
           <label className="flex items-center gap-2 text-sm text-muted">
             {mode === "group" ? "Grupo" : "Docente"}:

@@ -35,7 +35,7 @@ def validate(cfg):
         load[t.get("group")] = load.get(t.get("group"), 0) + int(t.get("weekly", 0) or 0)
     for g, h in load.items():
         if g in groups and slots and h > slots:
-            add(f"El grupo «{g}» tiene {h} horas semanales, pero la jornada solo tiene {slots} franjas ({len(days)} días × {P} horas). Sube las horas por día o baja la carga.")
+            add(f"El grupo «{g}» tiene {h} horas semanales, pero la jornada solo alcanza {slots} horas de clase ({len(days)} días × {P} horas). Sube las horas por día o baja la carga.")
 
     tload = {}
     for t in cfg.get("tasks", []):

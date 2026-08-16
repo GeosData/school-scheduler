@@ -6,6 +6,15 @@
   body { @apply bg-bg text-ink font-sans; }
 }
 
+@media print {
+  nav, .no-print { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0 !important; }
+  .card { border: none; box-shadow: none; padding: 0; }
+  table { page-break-inside: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
 @layer components {
   .card { @apply rounded-2xl border border-line bg-white p-5 shadow-sm; }
   .btn { @apply inline-flex items-center gap-2 rounded-full px-4 py-2.5 font-semibold transition; }
