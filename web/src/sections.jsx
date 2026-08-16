@@ -28,7 +28,7 @@ function Tip({ text }) {
 }
 
 export function Inicio() {
-  const { solve, setView, solving, subjects } = useStore();
+  const { solve, setView, solving, subjects, error } = useStore();
   const Step = ({ n, title, children }) => (
     <div className="flex gap-3">
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-white">{n}</span>
@@ -50,6 +50,8 @@ export function Inicio() {
           <button className="btn btn-accent" disabled={solving || !subjects.length} onClick={() => solve(20)}>{solving ? "Generando…" : "Ver un horario de ejemplo"}</button>
           <button className="btn btn-ghost" onClick={() => setView("importar")}>Cargar mis datos (Excel)</button>
         </div>
+        {error && <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-danger">{error}</p>}
+        {!subjects.length && !error && <p className="mt-3 text-sm text-muted">Cargando el colegio de ejemplo…</p>}
       </div>
     </section>
   );

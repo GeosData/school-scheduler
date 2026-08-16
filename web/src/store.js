@@ -75,7 +75,7 @@ export const useStore = create((set, get) => ({
       if (data.status === "INFEASIBLE" || data.status === "ERROR") set({ error: data.message || "No se pudo generar.", solving: false });
       else set({ result: data, solving: false, view: "horario" });
     } catch (e) {
-      set({ error: String(e), solving: false });
+      set({ error: "No se pudo conectar con el motor de horarios. Revisa que la aplicación siga abierta e inténtalo de nuevo.", solving: false });
     }
   },
 }));
