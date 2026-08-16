@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useStore } from "./store";
 import { Inicio, Importar, Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Preferencias, Generar } from "./sections.jsx";
 import Timetable from "./Timetable.jsx";
+import Tutorial from "./Tutorial.jsx";
 
 const NAV = [
   { group: "", items: [{ id: "inicio", label: "Inicio" }] },
@@ -33,7 +34,7 @@ const LABEL = Object.fromEntries(NAV.flatMap((s) => s.items).map((n) => [n.id, n
 const SECTIONS = { inicio: Inicio, importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, preferencias: Preferencias, generar: Generar, horario: Timetable };
 
 export default function App() {
-  const { view, setView, loadExample, subjects } = useStore();
+  const { view, setView, loadExample, subjects, openTutorial } = useStore();
   useEffect(() => { if (!subjects.length) loadExample(); }, []);
   const Active = SECTIONS[view];
   const idx = ORDER.indexOf(view);
@@ -41,6 +42,7 @@ export default function App() {
 
   return (
     <div className="grid min-h-screen md:grid-cols-[260px_1fr]">
+      <Tutorial />
       <nav className="border-b border-line bg-white p-4 md:border-b-0 md:border-r">
         <div className="mb-4 flex items-center gap-2.5 px-1 font-bold text-primary-dark">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white">
@@ -48,7 +50,13 @@ export default function App() {
           </span>
           Horarios Escolares
         </div>
-        <button className="btn btn-ghost mb-4 w-full justify-center text-sm" onClick={loadExample}>Cargar ejemplo</button>
+        <div className="mb-4 grid grid-cols-2 gap-2">
+          <button className="btn btn-ghost justify-center text-sm" onClick={loadExample}>Cargar ejemplo</button>
+          <button className="btn btn-ghost justify-center text-sm" onClick={openTutorial}>
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.7M12 17h.01" /></svg>
+            Guía
+          </button>
+        </div>
         <div className="flex flex-col gap-1">
           {NAV.map((sec, i) => (
             <div key={i} className={sec.group && i > 0 ? "mt-3 border-t border-line pt-3" : ""}>

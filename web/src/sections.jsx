@@ -18,6 +18,15 @@ function X({ onClick }) {
   return <button className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 text-lg text-primary-dark hover:bg-slate-200" onClick={onClick} title="Quitar">×</button>;
 }
 
+function Tip({ text }) {
+  return (
+    <span className="group relative ml-1 inline-flex align-middle">
+      <span className="grid h-4 w-4 cursor-help place-items-center rounded-full bg-slate-200 text-[10px] font-bold text-muted">?</span>
+      <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 hidden w-56 -translate-x-1/2 rounded-lg bg-ink px-3 py-2 text-xs font-normal normal-case leading-snug text-white shadow-lg group-hover:block">{text}</span>
+    </span>
+  );
+}
+
 export function Inicio() {
   const { solve, setView, solving, subjects } = useStore();
   const Step = ({ n, title, children }) => (
@@ -52,7 +61,7 @@ export function Rejilla() {
     <section className="card">
       <Head title="Rejilla y jornada" hint="Todo se genera desde acá: nada está fijo en el programa." />
       <div className="grid gap-4 sm:grid-cols-3">
-        <label className="block"><span className="text-sm text-muted">Minutos por hora</span>
+        <label className="block"><span className="text-sm text-muted">Minutos por hora<Tip text="Cuánto dura una hora de clase en tu colegio (45, 50, 55, 60…). De aquí sale la rejilla." /></span>
           <input className="input mt-1" type="number" value={grid.periodMinutes} onChange={(e) => setGrid({ periodMinutes: e.target.value })} />
         </label>
         <label className="block"><span className="text-sm text-muted">Horas por día</span>
@@ -115,8 +124,8 @@ export function Materias() {
           <div key={i} className="rounded-xl border border-line bg-[#fbfdff] p-3">
             <div className="flex items-center gap-2">
               <input className="input" placeholder="Nombre de la materia" value={s.name} onChange={(e) => upd(i, { name: e.target.value })} />
-              <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Bloque
-                <input className="input !w-16" type="number" min="0" value={s.block} onChange={(e) => upd(i, { block: e.target.value })} title="0 = suelta; 2 = de a dos horas" />
+              <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Bloque<Tip text="Horas seguidas. 0 = suelta. 2 = va de a dos horas juntas (típico en química, física, matemáticas). Un bloque no se parte por un descanso." />
+                <input className="input !w-16" type="number" min="0" value={s.block} onChange={(e) => upd(i, { block: e.target.value })} />
               </label>
               <button className={"shrink-0 rounded-full px-2.5 py-1.5 text-xs font-semibold transition " + (s.heavy ? "bg-primary text-white" : "bg-slate-100 text-muted hover:bg-slate-200")} onClick={() => upd(i, { heavy: !s.heavy })} title="Materia pesada: preferir horas tempranas">Pesada</button>
               <X onClick={() => set2("subjects", subjects.filter((_, j) => j !== i))} />
@@ -145,7 +154,7 @@ export function Docentes() {
     <section className="card">
       <Head title="Docentes" hint="Tope de horario: la última hora en que puede dictar (déjalo vacío si no tiene límite)." />
       <div className="grid grid-cols-[1fr_9rem_9rem_auto] items-center gap-2">
-        <span className="th">Nombre</span><span className="th">No después de</span><span className="th">Máx horas/día</span><span></span>
+        <span className="th">Nombre</span><span className="th">No después de<Tip text="La última hora en que el docente puede dictar. Ej: 4 = no dicta después de la 4ª hora. Déjalo vacío si no tiene límite." /></span><span className="th">Máx horas/día</span><span></span>
         {teachers.map((t, i) => (
           <div key={i} className="contents">
             <input className="input" placeholder="Nombre" value={t.name} onChange={(e) => upd(i, { name: e.target.value })} />

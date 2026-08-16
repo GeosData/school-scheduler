@@ -17,6 +17,13 @@ export const useStore = create((set, get) => ({
   solving: false,
   error: "",
   view: "inicio",
+  tutorial: typeof localStorage !== "undefined" && !localStorage.getItem("hs_tutorial_seen"),
+
+  openTutorial: () => set({ tutorial: true }),
+  closeTutorial: () => {
+    try { localStorage.setItem("hs_tutorial_seen", "1"); } catch (e) { /* noop */ }
+    set({ tutorial: false });
+  },
 
   setView: (view) => set({ view }),
   setGrid: (patch) => set((s) => ({ grid: { ...s.grid, ...patch } })),
