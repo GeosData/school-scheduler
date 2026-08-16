@@ -1,21 +1,27 @@
 import { create } from "zustand";
 
+const DEFAULT_RULES = {
+  noRepeatSameDay: { on: true, weight: 100 },
+  groupGaps: { on: true, weight: 3 },
+  teacherGaps: { on: true, weight: 1 },
+  heavyEarly: { on: false, weight: 2 },
+};
+const blankGrid = () => ({ days: ["Lun", "Mar", "Mie", "Jue", "Vie"], periodMinutes: 55, startTime: "06:30", breakMinutes: 15, periodsPerDay: 8, breakAfterPeriods: [2, 5], allowFreePeriods: true });
+const blankData = () => ({
+  grid: blankGrid(),
+  subjects: [], rooms: [], teachers: [], groups: [], tasks: [],
+  rules: JSON.parse(JSON.stringify(DEFAULT_RULES)),
+  result: null, error: "",
+});
+const newId = () => "n" + Math.random().toString(36).slice(2, 7);
+
 export const useStore = create((set, get) => ({
-  grid: { days: ["Lun", "Mar", "Mie", "Jue", "Vie"], periodMinutes: 55, startTime: "06:30", breakMinutes: 15, periodsPerDay: 8, breakAfterPeriods: [2, 5], allowFreePeriods: true },
-  subjects: [],
-  rooms: [],
-  teachers: [],
-  groups: [],
-  tasks: [],
-  rules: {
-    noRepeatSameDay: { on: true, weight: 100 },
-    groupGaps: { on: true, weight: 3 },
-    teacherGaps: { on: true, weight: 1 },
-    heavyEarly: { on: false, weight: 2 },
-  },
-  result: null,
+  levels: [{ id: "n1", name: "Secundaria" }],
+  saved: {},
+  activeId: "n1",
+
+  ...blankData(),
   solving: false,
-  error: "",
   view: "inicio",
   tutorial: typeof localStorage !== "undefined" && !localStorage.getItem("hs_tutorial_seen"),
 
@@ -23,6 +29,38 @@ export const useStore = create((set, get) => ({
   closeTutorial: () => {
     try { localStorage.setItem("hs_tutorial_seen", "1"); } catch (e) { /* noop */ }
     set({ tutorial: false });
+  },
+
+  snapshot: () => {
+    const s = get();
+    return { grid: s.grid, subjects: s.subjects, rooms: s.rooms, teachers: s.teachers, groups: s.groups, tasks: s.tasks, rules: s.rules, result: s.result, error: s.error };
+  },
+  selectLevel: (id) => {
+    const s = get();
+    if (id === s.activeId) return;
+    const saved = { ...s.saved, [s.activeId]: s.snapshot() };
+    const target = saved[id] || blankData();
+    set({ saved, activeId: id, ...target });
+  },
+  addLevel: (name) => {
+    const s = get();
+    const saved = { ...s.saved, [s.activeId]: s.snapshot() };
+    const id = newId();
+    set({ saved, levels: [...s.levels, { id, name: name || "Nuevo nivel" }], activeId: id, ...blankData(), view: "importar" });
+  },
+  renameLevel: (id, name) => set((s) => ({ levels: s.levels.map((l) => (l.id === id ? { ...l, name } : l)) })),
+  removeLevel: (id) => {
+    const s = get();
+    if (s.levels.length <= 1) return;
+    const levels = s.levels.filter((l) => l.id !== id);
+    const saved = { ...s.saved }; delete saved[id];
+    if (id === s.activeId) {
+      const nextId = levels[0].id;
+      const target = saved[nextId] || blankData();
+      set({ levels, saved, activeId: nextId, ...target });
+    } else {
+      set({ levels, saved });
+    }
   },
 
   setView: (view) => set({ view }),

@@ -34,7 +34,7 @@ const LABEL = Object.fromEntries(NAV.flatMap((s) => s.items).map((n) => [n.id, n
 const SECTIONS = { inicio: Inicio, importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, preferencias: Preferencias, generar: Generar, horario: Timetable };
 
 export default function App() {
-  const { view, setView, loadExample, subjects, openTutorial } = useStore();
+  const { view, setView, loadExample, subjects, openTutorial, levels, activeId, selectLevel, addLevel, renameLevel, removeLevel } = useStore();
   useEffect(() => { if (!subjects.length) loadExample(); }, []);
   const Active = SECTIONS[view];
   const idx = ORDER.indexOf(view);
@@ -49,6 +49,20 @@ export default function App() {
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="17" rx="2" /><path d="M3 9h18M8 2v4M16 2v4M8 14h.01M12 14h.01M16 14h.01" /></svg>
           </span>
           Horarios Escolares
+        </div>
+        <div className="mb-3 rounded-xl border border-line bg-[#fbfdff] p-2">
+          <div className="mb-1 px-1 text-[11px] font-semibold uppercase tracking-wide text-muted">Nivel / jornada</div>
+          <div className="flex items-center gap-1">
+            <select className="input flex-1 !py-1.5 text-sm" value={activeId} onChange={(e) => selectLevel(e.target.value)}>
+              {levels.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+            </select>
+            <button className="grid h-9 w-9 place-items-center rounded-lg bg-slate-100 text-lg text-primary-dark hover:bg-slate-200" title="Agregar nivel"
+              onClick={() => { const n = prompt("Nombre del nivel (ej: Preescolar, Primaria)"); if (n && n.trim()) addLevel(n.trim()); }}>+</button>
+          </div>
+          <div className="mt-1 flex gap-3 px-1 text-[11px] text-muted">
+            <button className="hover:underline" onClick={() => { const n = prompt("Nuevo nombre del nivel", (levels.find((l) => l.id === activeId) || {}).name); if (n && n.trim()) renameLevel(activeId, n.trim()); }}>Renombrar</button>
+            {levels.length > 1 && <button className="text-danger hover:underline" onClick={() => { if (confirm("¿Eliminar este nivel y su horario?")) removeLevel(activeId); }}>Eliminar</button>}
+          </div>
         </div>
         <div className="mb-4 grid grid-cols-2 gap-2">
           <button className="btn btn-ghost justify-center text-sm" onClick={loadExample}>Cargar ejemplo</button>
