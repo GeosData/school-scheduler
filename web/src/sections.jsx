@@ -90,6 +90,7 @@ export function Materias() {
               <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Bloque
                 <input className="input !w-16" type="number" min="0" value={s.block} onChange={(e) => upd(i, { block: e.target.value })} title="0 = suelta; 2 = de a dos horas" />
               </label>
+              <button className={"shrink-0 rounded-full px-2.5 py-1.5 text-xs font-semibold transition " + (s.heavy ? "bg-primary text-white" : "bg-slate-100 text-muted hover:bg-slate-200")} onClick={() => upd(i, { heavy: !s.heavy })} title="Materia pesada: preferir horas tempranas">Pesada</button>
               <X onClick={() => set2("subjects", subjects.filter((_, j) => j !== i))} />
             </div>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -248,6 +249,42 @@ export function Importar() {
           <li><b>Grupos</b>: un grupo por fila.</li>
           <li><b>Cargas</b>: docente, materia, grupo, horas/semana.</li>
         </ul>
+      </div>
+    </section>
+  );
+}
+
+const RULES = [
+  { id: "noRepeatSameDay", label: "No repetir materia el mismo día", hint: "Evita que un grupo vea la misma materia dos veces en un día." },
+  { id: "groupGaps", label: "Grupos sin huecos", hint: "Clases corridas, sin horas libres entre medio para los estudiantes." },
+  { id: "teacherGaps", label: "Docentes sin huecos", hint: "Minimiza las horas libres de los docentes entre clases." },
+  { id: "heavyEarly", label: "Materias pesadas temprano", hint: "Prefiere las materias marcadas como 'Pesada' en las primeras horas." },
+];
+
+export function Preferencias() {
+  const { rules, setRule } = useStore();
+  return (
+    <section className="card">
+      <Head title="Preferencias" hint="Reglas blandas: el colegio elige cuáles aplicar y con qué prioridad (peso más alto = más importante). No son obligatorias; el motor las optimiza sin romper las reglas duras." />
+      <div className="space-y-2">
+        {RULES.map((r) => {
+          const v = rules[r.id];
+          return (
+            <div key={r.id} className="flex items-center gap-3 rounded-xl border border-line bg-[#fbfdff] p-3">
+              <button onClick={() => setRule(r.id, { on: !v.on })}
+                className={"relative h-6 w-11 shrink-0 rounded-full transition " + (v.on ? "bg-accent" : "bg-slate-300")}>
+                <span className={"absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all " + (v.on ? "left-[22px]" : "left-0.5")} />
+              </button>
+              <div className="flex-1">
+                <div className="font-semibold text-ink">{r.label}</div>
+                <div className="text-xs text-muted">{r.hint}</div>
+              </div>
+              <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Peso
+                <input className="input !w-20" type="number" min="0" value={v.weight} disabled={!v.on} onChange={(e) => setRule(r.id, { weight: Number(e.target.value) || 0 })} />
+              </label>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

@@ -122,43 +122,76 @@ def solve(cfg, time_limit=30.0):
             if terms:
                 model.Add(sum(terms) <= mx)
 
-    repeats = []
-    for g in groups:
-        for subjname in subjects:
-            ss = [si for si, s in enumerate(sessions) if s["group"] == g and s["subject"] == subjname]
-            if len(ss) < 2:
-                continue
+    rules = cfg.get("rules") or {}
+
+    def rule(name, default_on, default_weight):
+        r = rules.get(name) or {}
+        return bool(r.get("on", default_on)), int(r.get("weight", default_weight))
+
+    def gap_bools(owners, tag):
+        out = []
+        for oi, sidxs in enumerate(owners):
             for d in range(D):
-                dayterms = [place[(si, dd, ps[0])] for si in ss for (dd, ps) in sessions[si]["cand"] if dd == d]
-                if not dayterms:
+                busy = []
+                for p in range(P):
+                    terms = [t for si in sidxs for t in occ(si, d, p)]
+                    bv = model.NewBoolVar(f"b_{tag}_{oi}_{d}_{p}")
+                    model.Add(bv == sum(terms)) if terms else model.Add(bv == 0)
+                    busy.append(bv)
+                for p in range(P):
+                    before = model.NewBoolVar(f"bf_{tag}_{oi}_{d}_{p}")
+                    after = model.NewBoolVar(f"af_{tag}_{oi}_{d}_{p}")
+                    model.AddMaxEquality(before, busy[:p]) if p > 0 else model.Add(before == 0)
+                    model.AddMaxEquality(after, busy[p + 1:]) if p < P - 1 else model.Add(after == 0)
+                    hole = model.NewBoolVar(f"h_{tag}_{oi}_{d}_{p}")
+                    model.Add(hole <= 1 - busy[p])
+                    model.Add(hole <= before)
+                    model.Add(hole <= after)
+                    model.Add(hole >= before + after - busy[p] - 1)
+                    out.append(hole)
+        return out
+
+    obj = []
+    repeats_vars = []
+
+    on, w = rule("noRepeatSameDay", True, 100)
+    if on and w:
+        for g in groups:
+            for subjname in subjects:
+                ss = [si for si, s in enumerate(sessions) if s["group"] == g and s["subject"] == subjname]
+                if len(ss) < 2:
                     continue
-                ex = model.NewIntVar(0, len(ss), f"ex_{g}_{subjname}_{d}")
-                model.Add(ex >= sum(dayterms) - 1)
-                repeats.append(ex)
+                for d in range(D):
+                    dayterms = [place[(si, dd, ps[0])] for si in ss for (dd, ps) in sessions[si]["cand"] if dd == d]
+                    if not dayterms:
+                        continue
+                    ex = model.NewIntVar(0, len(ss), f"ex_{g}_{subjname}_{d}")
+                    model.Add(ex >= sum(dayterms) - 1)
+                    repeats_vars.append(ex)
+        obj.append(w * sum(repeats_vars))
 
-    holes = []
-    for g in groups:
-        gs = [si for si, s in enumerate(sessions) if s["group"] == g]
-        for d in range(D):
-            busy = []
-            for p in range(P):
-                terms = [t for si in gs for t in occ(si, d, p)]
-                bv = model.NewBoolVar(f"busy_{g}_{d}_{p}")
-                model.Add(bv == sum(terms)) if terms else model.Add(bv == 0)
-                busy.append(bv)
-            for p in range(P):
-                before = model.NewBoolVar(f"bef_{g}_{d}_{p}")
-                after = model.NewBoolVar(f"aft_{g}_{d}_{p}")
-                model.AddMaxEquality(before, busy[:p]) if p > 0 else model.Add(before == 0)
-                model.AddMaxEquality(after, busy[p + 1:]) if p < P - 1 else model.Add(after == 0)
-                hole = model.NewBoolVar(f"hole_{g}_{d}_{p}")
-                model.Add(hole <= 1 - busy[p])
-                model.Add(hole <= before)
-                model.Add(hole <= after)
-                model.Add(hole >= before + after - busy[p] - 1)
-                holes.append(hole)
+    on, w = rule("groupGaps", True, 3)
+    if on and w:
+        owners = [[si for si, s in enumerate(sessions) if s["group"] == g] for g in groups]
+        obj.append(w * sum(gap_bools(owners, "g")))
 
-    model.Minimize(100 * sum(repeats) + sum(holes))
+    on, w = rule("teacherGaps", True, 1)
+    if on and w:
+        owners = [[si for si, s in enumerate(sessions) if s["teacher"] == t] for t in teachers]
+        obj.append(w * sum(gap_bools(owners, "t")))
+
+    on, w = rule("heavyEarly", False, 2)
+    if on and w:
+        heavy = []
+        for si, s in enumerate(sessions):
+            if subjects[s["subject"]].get("heavy"):
+                for (d, ps) in s["cand"]:
+                    heavy.append(ps[0] * place[(si, d, ps[0])])
+        if heavy:
+            obj.append(w * sum(heavy))
+
+    if obj:
+        model.Minimize(sum(obj))
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit
@@ -195,7 +228,7 @@ def solve(cfg, time_limit=30.0):
         "status": "OPTIMAL" if status == cp_model.OPTIMAL else "FEASIBLE",
         "seconds": round(solver.WallTime(), 1),
         "objective": int(solver.ObjectiveValue()),
-        "repeats": sum(solver.Value(ex) for ex in repeats),
+        "repeats": sum(solver.Value(ex) for ex in repeats_vars),
         "days": days,
         "periodsPerDay": P,
         "periodMinutes": cfg.get("periodMinutes"),
