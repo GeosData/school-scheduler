@@ -1,0 +1,41 @@
+{
+  "days": ["Lun", "Mar", "Mie", "Jue", "Vie"],
+  "periodMinutes": 55,
+  "periodsPerDay": 7,
+  "breakAfterPeriods": [2, 5],
+  "roomTypes": { "aula": 2, "laboratorio": 1, "sistemas": 1, "cancha": 1 },
+  "subjects": {
+    "Matematicas": { "allowedRoomTypes": ["aula"], "block": 2 },
+    "Espanol": { "allowedRoomTypes": ["aula"], "block": 0 },
+    "Sociales": { "allowedRoomTypes": ["aula"], "block": 0 },
+    "Quimica": { "allowedRoomTypes": ["aula", "laboratorio"], "block": 2 },
+    "Fisica": { "allowedRoomTypes": ["aula", "laboratorio"], "block": 2 },
+    "Tecnologia": { "allowedRoomTypes": ["aula", "sistemas"], "block": 0 },
+    "EdFisica": { "allowedRoomTypes": ["cancha"], "block": 0 }
+  },
+  "groups": ["11-1", "11-2"],
+  "teachers": {
+    "Prof-Mate": { "notAfterPeriod": null, "maxHoursPerDay": 6 },
+    "Prof-Ciencias": { "notAfterPeriod": null, "maxHoursPerDay": 6 },
+    "Prof-Sociales": { "notAfterPeriod": 3, "maxHoursPerDay": 6 },
+    "Prof-Lengua": { "notAfterPeriod": null, "maxHoursPerDay": 6 },
+    "Prof-Tec": { "notAfterPeriod": null, "maxHoursPerDay": 6 },
+    "Prof-EdFis": { "notAfterPeriod": null, "maxHoursPerDay": 6 }
+  },
+  "tasks": [
+    { "teacher": "Prof-Mate", "subject": "Matematicas", "group": "11-1", "weekly": 5 },
+    { "teacher": "Prof-Mate", "subject": "Matematicas", "group": "11-2", "weekly": 5 },
+    { "teacher": "Prof-Lengua", "subject": "Espanol", "group": "11-1", "weekly": 4 },
+    { "teacher": "Prof-Lengua", "subject": "Espanol", "group": "11-2", "weekly": 4 },
+    { "teacher": "Prof-Sociales", "subject": "Sociales", "group": "11-1", "weekly": 3 },
+    { "teacher": "Prof-Sociales", "subject": "Sociales", "group": "11-2", "weekly": 3 },
+    { "teacher": "Prof-Ciencias", "subject": "Quimica", "group": "11-1", "weekly": 3 },
+    { "teacher": "Prof-Ciencias", "subject": "Quimica", "group": "11-2", "weekly": 3 },
+    { "teacher": "Prof-Ciencias", "subject": "Fisica", "group": "11-1", "weekly": 3 },
+    { "teacher": "Prof-Ciencias", "subject": "Fisica", "group": "11-2", "weekly": 3 },
+    { "teacher": "Prof-Tec", "subject": "Tecnologia", "group": "11-1", "weekly": 2 },
+    { "teacher": "Prof-Tec", "subject": "Tecnologia", "group": "11-2", "weekly": 2 },
+    { "teacher": "Prof-EdFis", "subject": "EdFisica", "group": "11-1", "weekly": 2 },
+    { "teacher": "Prof-EdFis", "subject": "EdFisica", "group": "11-2", "weekly": 2 }
+  ]
+}
