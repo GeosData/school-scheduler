@@ -9,10 +9,9 @@
  "periodMinutes": 55,
  "startTime": "06:30",
  "breakMinutes": 15,
- "periodsPerDay": 8,
+ "periodsPerDay": 6,
  "breakAfterPeriods": [
-  2,
-  5
+  2
  ],
  "allowFreePeriods": true,
  "roomTypes": {
@@ -314,73 +313,73 @@
    "teacher": "Qui-1",
    "subject": "Quimica",
    "group": "6-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Qui-1",
    "subject": "Quimica",
    "group": "7-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Qui-1",
    "subject": "Quimica",
    "group": "8-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Qui-1",
    "subject": "Quimica",
    "group": "9-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Qui-1",
    "subject": "Quimica",
    "group": "10-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Qui-1",
    "subject": "Quimica",
    "group": "11-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Fis-1",
    "subject": "Fisica",
    "group": "6-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Fis-1",
    "subject": "Fisica",
    "group": "7-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Fis-1",
    "subject": "Fisica",
    "group": "8-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Fis-1",
    "subject": "Fisica",
    "group": "9-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Fis-1",
    "subject": "Fisica",
    "group": "10-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Fis-1",
    "subject": "Fisica",
    "group": "11-1",
-   "weekly": 3
+   "weekly": 2
   },
   {
    "teacher": "Bio-1",

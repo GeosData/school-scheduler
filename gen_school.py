@@ -4,17 +4,18 @@ import math
 
 GRADES = [6, 7, 8, 9, 10, 11]
 GROUPS_PER_GRADE = 1
-PERIODS_PER_DAY = 8
+PERIODS_PER_DAY = 6
+BREAK_AFTER = [2]
 TEACHER_CAP = 24
 
-# 9 áreas obligatorias del MEN (Ley 115, Art. 23), en nombres de materia de secundaria.
+# 9 áreas obligatorias del MEN (Ley 115, Art. 23). Suman 30 h/semana = 6 horas/día x 5 días (jornada llena).
 SUBJECTS = {
     "Matematicas": {"weekly": 5, "block": 2, "allowedRoomTypes": ["aula"], "heavy": True},
     "Lengua Castellana": {"weekly": 4, "block": 0, "allowedRoomTypes": ["aula"]},
     "Ingles": {"weekly": 3, "block": 0, "allowedRoomTypes": ["aula"]},
     "Ciencias Sociales": {"weekly": 4, "block": 0, "allowedRoomTypes": ["aula"]},
-    "Quimica": {"weekly": 3, "block": 2, "allowedRoomTypes": ["aula", "laboratorio"], "heavy": True},
-    "Fisica": {"weekly": 3, "block": 2, "allowedRoomTypes": ["aula", "laboratorio"], "heavy": True},
+    "Quimica": {"weekly": 2, "block": 2, "allowedRoomTypes": ["aula", "laboratorio"], "heavy": True},
+    "Fisica": {"weekly": 2, "block": 2, "allowedRoomTypes": ["aula", "laboratorio"], "heavy": True},
     "Biologia": {"weekly": 2, "block": 0, "allowedRoomTypes": ["aula", "laboratorio"]},
     "Ed. Fisica": {"weekly": 2, "block": 0, "allowedRoomTypes": ["cancha", "aula"]},
     "Artistica": {"weekly": 2, "block": 0, "allowedRoomTypes": ["aula"]},
@@ -59,7 +60,7 @@ def build():
         "startTime": "06:30",
         "breakMinutes": 15,
         "periodsPerDay": PERIODS_PER_DAY,
-        "breakAfterPeriods": [2, 5],
+        "breakAfterPeriods": BREAK_AFTER,
         "allowFreePeriods": True,
         "roomTypes": {"aula": n_groups, "laboratorio": 2, "sistemas": 2, "cancha": 2},
         "subjects": {s: {"allowedRoomTypes": m["allowedRoomTypes"], "block": m["block"], **({"heavy": True} if m.get("heavy") else {})} for s, m in SUBJECTS.items()},
