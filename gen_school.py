@@ -3,17 +3,20 @@ import sys
 import math
 
 GRADES = [6, 7, 8, 9, 10, 11]
-GROUPS_PER_GRADE = 3
+GROUPS_PER_GRADE = 1
 PERIODS_PER_DAY = 8
 TEACHER_CAP = 24
 
+# 9 áreas obligatorias del MEN (Ley 115, Art. 23), en nombres de materia de secundaria.
 SUBJECTS = {
-    "Matematicas": {"weekly": 5, "block": 2, "allowedRoomTypes": ["aula"]},
-    "Espanol": {"weekly": 5, "block": 0, "allowedRoomTypes": ["aula"]},
+    "Matematicas": {"weekly": 5, "block": 2, "allowedRoomTypes": ["aula"], "heavy": True},
+    "Lengua Castellana": {"weekly": 4, "block": 0, "allowedRoomTypes": ["aula"]},
     "Ingles": {"weekly": 3, "block": 0, "allowedRoomTypes": ["aula"]},
-    "Sociales": {"weekly": 4, "block": 0, "allowedRoomTypes": ["aula"]},
-    "Naturales": {"weekly": 4, "block": 2, "allowedRoomTypes": ["aula", "laboratorio"]},
-    "EdFisica": {"weekly": 2, "block": 0, "allowedRoomTypes": ["cancha", "aula"]},
+    "Ciencias Sociales": {"weekly": 4, "block": 0, "allowedRoomTypes": ["aula"]},
+    "Quimica": {"weekly": 3, "block": 2, "allowedRoomTypes": ["aula", "laboratorio"], "heavy": True},
+    "Fisica": {"weekly": 3, "block": 2, "allowedRoomTypes": ["aula", "laboratorio"], "heavy": True},
+    "Biologia": {"weekly": 2, "block": 0, "allowedRoomTypes": ["aula", "laboratorio"]},
+    "Ed. Fisica": {"weekly": 2, "block": 0, "allowedRoomTypes": ["cancha", "aula"]},
     "Artistica": {"weekly": 2, "block": 0, "allowedRoomTypes": ["aula"]},
     "Tecnologia": {"weekly": 2, "block": 0, "allowedRoomTypes": ["aula", "sistemas"]},
     "Etica": {"weekly": 1, "block": 0, "allowedRoomTypes": ["aula"]},
@@ -24,9 +27,9 @@ SUBJECTS = {
 def build():
     groups = [f"{g}-{n}" for g in GRADES for n in range(1, GROUPS_PER_GRADE + 1)]
     tasks, teachers = [], {}
-    prefix = {"Matematicas": "Mat", "Espanol": "Len", "Ingles": "Ing", "Sociales": "Soc",
-              "Naturales": "Nat", "EdFisica": "Fis", "Artistica": "Art", "Tecnologia": "Tec",
-              "Etica": "Eti", "Religion": "Rel"}
+    prefix = {"Matematicas": "Mat", "Lengua Castellana": "Len", "Ingles": "Ing", "Ciencias Sociales": "Soc",
+              "Quimica": "Qui", "Fisica": "Fis", "Biologia": "Bio", "Ed. Fisica": "EdF", "Artistica": "Art",
+              "Tecnologia": "Tec", "Etica": "Eti", "Religion": "Rel"}
 
     for subj, meta in SUBJECTS.items():
         w = meta["weekly"]
@@ -34,16 +37,17 @@ def build():
         names = [f"{prefix[subj]}-{i+1}" for i in range(n_teachers)]
         for i, g in enumerate(groups):
             tname = names[i % n_teachers]
-            teachers.setdefault(tname, {"load": 0})
+            teachers.setdefault(tname, {"load": 0, "block": False})
             teachers[tname]["load"] += w
+            if meta["block"]:
+                teachers[tname]["block"] = True
             tasks.append({"teacher": tname, "subject": subj, "group": g, "weekly": w})
 
     out_teachers = {}
     part_time = 0
-    avail_slots = 5 * 5
     for tname, info in teachers.items():
         na = None
-        if info["load"] <= avail_slots - 4 and part_time < 4:
+        if not info["block"] and info["load"] <= 14 and part_time < 2:
             na = 4
             part_time += 1
         out_teachers[tname] = {"notAfterPeriod": na, "maxHoursPerDay": 6}
@@ -52,10 +56,13 @@ def build():
     cfg = {
         "days": ["Lun", "Mar", "Mie", "Jue", "Vie"],
         "periodMinutes": 55,
+        "startTime": "06:30",
+        "breakMinutes": 15,
         "periodsPerDay": PERIODS_PER_DAY,
         "breakAfterPeriods": [2, 5],
+        "allowFreePeriods": True,
         "roomTypes": {"aula": n_groups, "laboratorio": 2, "sistemas": 2, "cancha": 2},
-        "subjects": {s: {"allowedRoomTypes": m["allowedRoomTypes"], "block": m["block"]} for s, m in SUBJECTS.items()},
+        "subjects": {s: {"allowedRoomTypes": m["allowedRoomTypes"], "block": m["block"], **({"heavy": True} if m.get("heavy") else {})} for s, m in SUBJECTS.items()},
         "groups": groups,
         "teachers": out_teachers,
         "tasks": tasks,

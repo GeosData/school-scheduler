@@ -233,23 +233,26 @@ export function Cargas() {
 }
 
 export function Importar() {
-  const { set2, setView } = useStore();
+  const { set2, setView, subjects, rooms, teachers, groups, tasks } = useStore();
   const [msg, setMsg] = useState("");
 
   async function downloadTemplate() {
     const XLSX = await import("xlsx");
     const wb = XLSX.utils.book_new();
-    const add = (name, rows, cols) => {
-      const ws = XLSX.utils.aoa_to_sheet(rows);
+    const add = (name, header, rows, cols) => {
+      const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
       if (cols) ws["!cols"] = cols;
       XLSX.utils.book_append_sheet(wb, ws, name);
     };
-    add("Docentes", [["Nombre", "No despues de (hora, opcional)", "Max horas/dia"], ["Prof-Mate", "", "6"], ["Prof-Sociales", "4", "6"]], [{ wch: 18 }, { wch: 26 }, { wch: 14 }]);
-    add("Materias", [["Materia", "Tipos de salon (separados por coma)", "Bloque (0=suelta, 2=de a dos)"], ["Matematicas", "aula", "2"], ["Quimica", "aula, laboratorio", "2"], ["Tecnologia", "aula, sistemas", "0"]], [{ wch: 16 }, { wch: 34 }, { wch: 28 }]);
-    add("Salones", [["Tipo", "Cantidad"], ["aula", "18"], ["laboratorio", "2"], ["sistemas", "2"], ["cancha", "2"]], [{ wch: 16 }, { wch: 10 }]);
-    add("Grupos", [["Grupo"], ["6-1"], ["6-2"], ["11-3"]], [{ wch: 10 }]);
-    add("Cargas", [["Docente", "Materia", "Grupo", "Horas/semana"], ["Prof-Mate", "Matematicas", "6-1", "5"], ["Prof-Sociales", "Sociales", "6-1", "3"]], [{ wch: 18 }, { wch: 16 }, { wch: 10 }, { wch: 14 }]);
-    XLSX.writeFile(wb, "plantilla-horarios.xlsx");
+    add("Docentes", ["Nombre", "No despues de (hora, opcional)", "Max horas/dia"],
+      teachers.map((t) => [t.name, t.notAfterPeriod ?? "", t.maxHoursPerDay ?? 6]), [{ wch: 20 }, { wch: 26 }, { wch: 14 }]);
+    add("Materias", ["Materia", "Tipos de salon (separados por coma)", "Bloque (0=suelta, 2=de a dos)"],
+      subjects.map((s) => [s.name, (s.allowedRoomTypes || []).join(", "), s.block || 0]), [{ wch: 20 }, { wch: 34 }, { wch: 28 }]);
+    add("Salones", ["Tipo", "Cantidad"], rooms.map((r) => [r.type, r.cap]), [{ wch: 16 }, { wch: 10 }]);
+    add("Grupos", ["Grupo"], groups.map((g) => [g]), [{ wch: 10 }]);
+    add("Cargas", ["Docente", "Materia", "Grupo", "Horas/semana"],
+      tasks.map((t) => [t.teacher, t.subject, t.group, t.weekly]), [{ wch: 20 }, { wch: 20 }, { wch: 10 }, { wch: 14 }]);
+    XLSX.writeFile(wb, "ejemplo-horarios.xlsx");
   }
 
   async function importFile(e) {
@@ -286,13 +289,13 @@ export function Importar() {
 
   return (
     <section className="card">
-      <Head title="Importar desde Excel" hint="Descarga la plantilla, llénala con los datos del colegio y súbela. Cada hoja llena una sección." />
+      <Head title="Importar desde Excel" hint="Descarga el archivo base (viene lleno con el colegio de ejemplo), reemplaza los datos con los de tu colegio y súbelo. Cada hoja llena una sección." />
       <div className="flex flex-wrap items-center gap-2">
-        <label className="btn btn-primary cursor-pointer">
-          Subir Excel
+        <button className="btn btn-primary" onClick={downloadTemplate}>Descargar archivo base (.xlsx)</button>
+        <label className="btn btn-ghost cursor-pointer">
+          Subir mi Excel
           <input type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={importFile} />
         </label>
-        <button className="btn btn-ghost" onClick={downloadTemplate}>Descargar plantilla .xlsx</button>
       </div>
       {msg && <p className="mt-4 rounded-xl border border-line bg-[#f4fbf6] p-3 text-sm">{msg}</p>}
       <div className="mt-5 text-sm text-muted">
@@ -315,12 +318,14 @@ const RULES = [
   { id: "teacherGaps", label: "Docentes sin huecos", hint: "Minimiza las horas libres de los docentes entre clases." },
   { id: "heavyEarly", label: "Materias pesadas temprano", hint: "Prefiere las materias marcadas como 'Pesada' en las primeras horas." },
 ];
+const PRIOS = { Baja: 2, Media: 10, Alta: 50 };
+const prioOf = (w) => (w >= 30 ? "Alta" : w >= 6 ? "Media" : "Baja");
 
 export function Preferencias() {
   const { rules, setRule } = useStore();
   return (
     <section className="card">
-      <Head title="Preferencias" hint="Reglas blandas: el colegio elige cuáles aplicar y con qué prioridad (peso más alto = más importante). No son obligatorias; el motor las optimiza sin romper las reglas duras." />
+      <Head title="Preferencias" hint="El colegio elige qué reglas aplicar y qué tan importante es cada una. No son obligatorias; el motor las trata de cumplir sin romper las reglas duras (choques, disponibilidad, bloques)." />
       <div className="space-y-2">
         {RULES.map((r) => {
           const v = rules[r.id];
@@ -334,8 +339,12 @@ export function Preferencias() {
                 <div className="font-semibold text-ink">{r.label}</div>
                 <div className="text-xs text-muted">{r.hint}</div>
               </div>
-              <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Peso
-                <input className="input !w-20" type="number" min="0" value={v.weight} disabled={!v.on} onChange={(e) => setRule(r.id, { weight: Number(e.target.value) || 0 })} />
+              <label className="flex shrink-0 items-center gap-1.5 text-sm text-muted">Prioridad
+                <select className="input !w-28" value={prioOf(v.weight)} disabled={!v.on} onChange={(e) => setRule(r.id, { weight: PRIOS[e.target.value] })}>
+                  <option value="Baja">Baja</option>
+                  <option value="Media">Media</option>
+                  <option value="Alta">Alta</option>
+                </select>
               </label>
             </div>
           );

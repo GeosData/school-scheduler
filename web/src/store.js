@@ -1,10 +1,10 @@
 import { create } from "zustand";
 
 const DEFAULT_RULES = {
-  noRepeatSameDay: { on: true, weight: 100 },
-  groupGaps: { on: true, weight: 3 },
-  teacherGaps: { on: true, weight: 1 },
-  heavyEarly: { on: false, weight: 2 },
+  noRepeatSameDay: { on: true, weight: 50 },
+  groupGaps: { on: true, weight: 10 },
+  teacherGaps: { on: true, weight: 2 },
+  heavyEarly: { on: false, weight: 10 },
 };
 const blankGrid = () => ({ days: ["Lun", "Mar", "Mie", "Jue", "Vie"], periodMinutes: 55, startTime: "06:30", breakMinutes: 15, periodsPerDay: 8, breakAfterPeriods: [2, 5], allowFreePeriods: true });
 const blankData = () => ({
