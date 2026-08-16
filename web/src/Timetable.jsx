@@ -24,7 +24,7 @@ function computeTimes(result) {
 }
 
 export default function Timetable() {
-  const { result, setView, moveClass } = useStore();
+  const { result, setView, moveClass, canMoveClass } = useStore();
   const [mode, setMode] = useState("group");
   const [sel, setSel] = useState(null);
   const [picked, setPicked] = useState(null);
@@ -192,7 +192,7 @@ export default function Timetable() {
       </div>
 
       {editable && (
-        <p className="mb-2 text-xs text-muted no-print">Ajuste manual: toca una clase y luego un espacio libre para moverla. {picked ? "Ahora toca dónde la quieres poner (o la misma clase para soltar)." : ""}</p>
+        <p className="mb-2 text-xs text-muted no-print">Ajuste manual: toca una clase y {picked ? "luego uno de los espacios en verde (ahí sí puede ir). Toca la misma clase para soltar." : "se iluminarán en verde los espacios libres donde sí puede moverse (sin chocar con el docente ni el salón)."}</p>
       )}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">
@@ -213,16 +213,17 @@ export default function Timetable() {
                   {days.map((_, d) => {
                     const c = data.grid[d][p];
                     const isPicked = editable && picked && picked.d === d && picked.p === p;
+                    const validTarget = editable && picked && !c && canMoveClass(current, picked.d, picked.p, d, p).ok;
                     return (
                       <td key={d} onClick={editable ? () => onCell(d, p, c) : undefined}
-                        className={"border border-slate-300 p-0 align-middle " + (editable ? "cursor-pointer " : "") + (isPicked ? "ring-2 ring-inset ring-primary " : (editable && picked && !c ? "hover:bg-[#eef4ff] " : ""))}
+                        className={"border border-slate-300 p-0 align-middle " + (editable ? "cursor-pointer " : "") + (isPicked ? "ring-2 ring-inset ring-primary " : (validTarget ? "bg-[#e7f6ee] hover:bg-[#d7efe0] " : ""))}
                         style={c ? { background: colorFor(c.subject, subjectKeys) } : {}}>
                         {c ? (
                           <div className="px-2 py-2 text-center">
                             <div className="font-bold text-ink">{c.subject}</div>
                             <div className="text-[11px] text-slate-600">{metaOf(c)}</div>
                           </div>
-                        ) : <div className="py-4 text-center text-slate-300">{editable && picked ? "＋" : "·"}</div>}
+                        ) : <div className={"py-4 text-center " + (validTarget ? "text-lg font-bold text-accent" : "text-slate-300")}>{validTarget ? "＋" : "·"}</div>}
                       </td>
                     );
                   })}

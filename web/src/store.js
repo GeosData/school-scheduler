@@ -175,28 +175,36 @@ export const useStore = create((set, get) => ({
     }
   },
 
-  moveClass: (group, fd, fp, td, tp) => {
+  canMoveClass: (group, fd, fp, td, tp) => {
     const s = get();
     const res = s.result;
-    if (!res || (fd === td && fp === tp)) return;
+    if (!res || (fd === td && fp === tp)) return { ok: false };
     const g = res.byGroup[group];
     const cell = g.grid[fd][fp];
-    if (!cell) return;
-    if (g.grid[td][tp]) { s.pushToast("Ahí ya hay una clase de este grupo", "error"); return; }
+    if (!cell) return { ok: false };
+    if (g.grid[td][tp]) return { ok: false, reason: "Ahí ya hay una clase de este grupo" };
     const teacher = cell.teacher;
     const tGrid = res.byTeacher[teacher] && res.byTeacher[teacher].grid;
-    if (tGrid && tGrid[td][tp]) { s.pushToast(`${teacher} ya dicta a esa hora`, "error"); return; }
+    if (tGrid && tGrid[td][tp]) return { ok: false, reason: `${teacher} ya dicta a esa hora en otro grupo` };
     const teDef = s.teachers.find((t) => t.name === teacher);
     const limit = teDef && teDef.notAfterPeriod !== "" && teDef.notAfterPeriod != null ? Number(teDef.notAfterPeriod) : null;
-    if (limit != null && tp >= limit) { s.pushToast(`${teacher} no puede dictar a esa hora (su tope es la ${limit}ª)`, "error"); return; }
+    if (limit != null && tp >= limit) return { ok: false, reason: `${teacher} no puede dictar a esa hora (su tope es la ${limit}ª)` };
     const subj = s.subjects.find((x) => x.name === cell.subject);
     const allowed = subj ? subj.allowedRoomTypes : [cell.roomType];
     const capOf = (ty) => { const r = s.rooms.find((rr) => rr.type === ty); return r ? Number(r.cap) : 0; };
     const usedAt = (ty) => Object.values(res.byGroup).reduce((n, gg) => n + (gg.grid[td][tp] && gg.grid[td][tp].roomType === ty ? 1 : 0), 0);
     let chosen = null;
     for (const ty of allowed) { if (usedAt(ty) < capOf(ty)) { chosen = ty; break; } }
-    if (!chosen) { s.pushToast("No hay salón libre de un tipo permitido a esa hora", "error"); return; }
+    if (!chosen) return { ok: false, reason: "No hay salón libre de un tipo permitido a esa hora" };
+    return { ok: true, roomType: chosen, cell, teacher };
+  },
 
+  moveClass: (group, fd, fp, td, tp) => {
+    const s = get();
+    const chk = get().canMoveClass(group, fd, fp, td, tp);
+    if (!chk.ok) { if (chk.reason) s.pushToast(chk.reason, "error"); return; }
+    const res = s.result;
+    const cell = chk.cell, teacher = chk.teacher, chosen = chk.roomType;
     const clone = (grid) => grid.map((row) => row.slice());
     const byGroup = { ...res.byGroup };
     byGroup[group] = { ...g, grid: clone(g.grid) };
