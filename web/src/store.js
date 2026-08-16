@@ -16,7 +16,7 @@ export const useStore = create((set, get) => ({
   result: null,
   solving: false,
   error: "",
-  view: "importar",
+  view: "inicio",
 
   setView: (view) => set({ view }),
   setGrid: (patch) => set((s) => ({ grid: { ...s.grid, ...patch } })),

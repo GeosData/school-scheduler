@@ -1,24 +1,25 @@
 import { useEffect } from "react";
 import { useStore } from "./store";
-import { Importar, Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Preferencias, Generar } from "./sections.jsx";
+import { Inicio, Importar, Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Preferencias, Generar } from "./sections.jsx";
 import Timetable from "./Timetable.jsx";
 
 const NAV = [
+  { group: "", items: [{ id: "inicio", label: "Inicio" }] },
   {
-    group: "Configuración",
+    group: "1 · Datos del colegio",
     items: [
       { id: "importar", label: "Importar Excel" },
       { id: "rejilla", label: "Rejilla y jornada" },
-      { id: "materias", label: "Materias" },
       { id: "salones", label: "Salones" },
+      { id: "materias", label: "Materias" },
       { id: "docentes", label: "Docentes" },
       { id: "grupos", label: "Grupos" },
       { id: "cargas", label: "Cargas académicas" },
-      { id: "preferencias", label: "Preferencias" },
     ],
   },
+  { group: "2 · Reglas", items: [{ id: "preferencias", label: "Preferencias" }] },
   {
-    group: "Generar horario",
+    group: "3 · Generar",
     items: [
       { id: "generar", label: "Generar" },
       { id: "horario", label: "Horario" },
@@ -26,12 +27,17 @@ const NAV = [
   },
 ];
 
-const SECTIONS = { importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, preferencias: Preferencias, generar: Generar, horario: Timetable };
+const ORDER = ["inicio", "importar", "rejilla", "salones", "materias", "docentes", "grupos", "cargas", "preferencias", "generar", "horario"];
+const LABEL = Object.fromEntries(NAV.flatMap((s) => s.items).map((n) => [n.id, n.label]));
+
+const SECTIONS = { inicio: Inicio, importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, preferencias: Preferencias, generar: Generar, horario: Timetable };
 
 export default function App() {
   const { view, setView, loadExample, subjects } = useStore();
   useEffect(() => { if (!subjects.length) loadExample(); }, []);
   const Active = SECTIONS[view];
+  const idx = ORDER.indexOf(view);
+  const next = idx >= 0 && idx < ORDER.length - 1 ? ORDER[idx + 1] : null;
 
   return (
     <div className="grid min-h-screen md:grid-cols-[260px_1fr]">
@@ -45,8 +51,8 @@ export default function App() {
         <button className="btn btn-ghost mb-4 w-full justify-center text-sm" onClick={loadExample}>Cargar ejemplo</button>
         <div className="flex flex-col gap-1">
           {NAV.map((sec, i) => (
-            <div key={sec.group} className={i > 0 ? "mt-3 border-t border-line pt-3" : ""}>
-              <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">{sec.group}</p>
+            <div key={i} className={sec.group && i > 0 ? "mt-3 border-t border-line pt-3" : ""}>
+              {sec.group && <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">{sec.group}</p>}
               {sec.items.map((n) => (
                 <button key={n.id} onClick={() => setView(n.id)}
                   className={"w-full rounded-lg px-3 py-2 text-left text-sm transition " + (view === n.id ? "bg-[#e7effc] font-semibold text-primary-dark" : "text-muted hover:bg-[#eef3fb]")}>
@@ -57,7 +63,19 @@ export default function App() {
           ))}
         </div>
       </nav>
-      <main className="p-5 md:p-8"><div className="mx-auto max-w-4xl"><Active /></div></main>
+      <main className="p-5 md:p-8">
+        <div className="mx-auto max-w-4xl">
+          <Active />
+          {next && (
+            <div className="mt-5 flex justify-end">
+              <button className="btn btn-primary" onClick={() => setView(next)}>
+                Siguiente: {LABEL[next]}
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

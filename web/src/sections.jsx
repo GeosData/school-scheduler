@@ -18,6 +18,34 @@ function X({ onClick }) {
   return <button className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 text-lg text-primary-dark hover:bg-slate-200" onClick={onClick} title="Quitar">×</button>;
 }
 
+export function Inicio() {
+  const { solve, setView, solving, subjects } = useStore();
+  const Step = ({ n, title, children }) => (
+    <div className="flex gap-3">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-white">{n}</span>
+      <div><div className="font-semibold text-ink">{title}</div><div className="text-sm text-muted">{children}</div></div>
+    </div>
+  );
+  return (
+    <section className="card">
+      <h2 className="text-2xl font-bold">Genera el horario de tu colegio</h2>
+      <p className="mt-1 text-muted">Sin choques y sin pelear con Excel. Todo corre en tu computador, sin internet.</p>
+      <div className="my-6 space-y-4">
+        <Step n={1} title="Carga los datos del colegio">Docentes, materias, salones, grupos y las cargas académicas. Desde un Excel o a mano, en las secciones del menú.</Step>
+        <Step n={2} title="Ajusta las reglas (opcional)">Descansos, materias por bloque y preferencias, como docentes sin huecos o materias pesadas temprano.</Step>
+        <Step n={3} title="Genera y revisa">El horario sale solo, sin choques. Lo ves por grupo o por docente y lo exportas.</Step>
+      </div>
+      <div className="rounded-xl border border-line bg-[#f4fbf6] p-4">
+        <p className="mb-3 text-sm text-muted">Ya cargamos un <b>colegio de ejemplo</b> para que veas cómo queda. Genéralo con un clic, y luego reemplázalo con los datos de tu colegio.</p>
+        <div className="flex flex-wrap gap-2">
+          <button className="btn btn-accent" disabled={solving || !subjects.length} onClick={() => solve(20)}>{solving ? "Generando…" : "Ver un horario de ejemplo"}</button>
+          <button className="btn btn-ghost" onClick={() => setView("importar")}>Cargar mis datos (Excel)</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function Rejilla() {
   const { grid, setGrid, toggleBreak } = useStore();
   return (
@@ -291,12 +319,31 @@ export function Preferencias() {
 }
 
 export function Generar() {
-  const { solve, solving, error, result, groups, tasks } = useStore();
+  const { solve, solving, error, result, subjects, rooms, teachers, groups, tasks } = useStore();
+  const checks = [
+    { label: "Salones", n: rooms.length },
+    { label: "Materias", n: subjects.length },
+    { label: "Docentes", n: teachers.length },
+    { label: "Grupos", n: groups.length },
+    { label: "Cargas académicas", n: tasks.length },
+  ];
+  const ready = checks.every((c) => c.n > 0);
   return (
     <section className="card">
       <Head title="Generar horario" hint="El motor arma el horario respetando todas las restricciones y minimizando huecos." />
-      <p className="mb-4 text-sm text-muted">{groups.length} grupos · {tasks.length} cargas cargadas.</p>
-      <button className="btn btn-accent" onClick={() => solve(30)} disabled={solving}>{solving ? "Generando…" : "Generar horario"}</button>
+      <div className="mb-4 rounded-xl border border-line bg-[#fbfdff] p-4">
+        <p className="mb-2 text-sm font-semibold text-muted">Antes de generar necesitas:</p>
+        <div className="space-y-1.5">
+          {checks.map((c) => (
+            <div key={c.label} className="flex items-center gap-2 text-sm">
+              <span className={"grid h-5 w-5 place-items-center rounded-full text-xs font-bold " + (c.n > 0 ? "bg-accent text-white" : "bg-slate-200 text-muted")}>{c.n > 0 ? "✓" : "!"}</span>
+              <span className={c.n > 0 ? "text-ink" : "text-muted"}>{c.label}: <b>{c.n}</b></span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <button className="btn btn-accent" onClick={() => solve(30)} disabled={solving || !ready}>{solving ? "Generando…" : "Generar horario"}</button>
+      {!ready && <p className="mt-2 text-sm text-muted">Faltan datos. Complétalos en las secciones del menú, o usa Importar Excel.</p>}
       {error && (
         <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm">
           <b className="text-danger">No se pudo generar.</b> {error}
