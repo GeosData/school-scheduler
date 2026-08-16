@@ -42,8 +42,16 @@ De aquí se derivan las **franjas** (time slots) sobre las que trabaja el motor.
 
 ### Cargas académicas / tareas (`tasks`)
 Una tarea = asignación **docente × materia × grupo**.
-- `weeklyPeriods` — intensidad horaria (en franjas por semana).
+- `weeklyPeriods` — intensidad horaria (en franjas por semana). **Es por tarea, o sea por grupo/grado**: la misma materia puede tener distinta carga en primaria que en secundaria (ej. matemáticas 5h en un grado, 4h en otro). El motor no asume nada; lo define el colegio por grupo.
 - `requiresBlock` + `blockSize` — flag por **tarea** (hereda de la materia por defecto, editable). La misma materia puede ir en bloque en un grupo y no en otro.
+
+### Intensidad horaria — legislación Colombia (Decreto 1850 de 2002, compilado en 1075 de 2015)
+Mínimos de **horas efectivas de 60 min** por nivel: **preescolar 20 h/sem** (800/año), **primaria 25 h/sem** (1000/año), **secundaria y media 30 h/sem** (1200/año). Al menos **80%** a áreas obligatorias; el **rector distribuye** la intensidad por materia y grado (autonomía PEI) respetando los mínimos. [Hay una modificación de 2025 (Decreto 0277) — verificar cifras vigentes exactas antes de fijar defaults.]
+
+Implicaciones para el producto:
+- **La carga total por grupo varía por nivel** (25 vs 30) — se maneja solo, porque cada grupo suma sus propias tareas. No se fuerza un total uniforme.
+- **Horas legales de 60 min vs franjas del colegio:** la ley cuenta en horas de 60 min; el colegio usa periodos de 45/50/55 min. Nuestro `weeklyPeriods` está en **franjas** (periodos del colegio), no en horas de 60. El coordinador traduce el mínimo legal a franjas (ya lo hacen hoy).
+- **Rejilla por nivel (mejora futura):** hoy la rejilla es una sola para todo el colegio. Un colegio con primaria (25h) y secundaria (30h) con distinto número de horas/día generaría **por jornada/nivel por separado** (caso común, ya funciona), o más adelante rejillas por nivel.
 
 ## Restricciones (todas configurables: activar/desactivar + parámetros + peso)
 
