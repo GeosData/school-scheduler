@@ -1,21 +1,25 @@
 # school-scheduler — generador de horarios escolares
 
-Motor config-driven para armar horarios de colegio sin choques. Todo se define en un JSON de configuración (ver `config.example.json`); el motor no trae ninguna regla quemada. Modelo completo en `docs/modelo-configurable.md`.
+App config-driven para armar horarios de colegio sin choques. Todo (rejilla, materias, salones, docentes, grupos, cargas, restricciones) se configura por institución; el motor no trae reglas quemadas. Modelo en `docs/modelo-configurable.md`, decisiones en `docs/adr-001-stack.md`.
 
-## Spike del motor (OR-Tools CP-SAT)
+## Correr
 
 ```bash
-pip install -r requirements.txt
-python solve.py config.example.json
+pip install -r api/requirements.txt
+cd web && npm install && npm run build && cd ..
+python -m uvicorn api.main:app --host 127.0.0.1 --port 8000
+# abrir http://127.0.0.1:8000
 ```
 
-Restricciones duras: choques docente/grupo/salón, disponibilidad y tope de horario del docente, intensidad horaria, salón dentro de los tipos permitidos por materia (química = aula o laboratorio), bloques en franjas consecutivas que no cruzan un descanso.
-Restricciones blandas (optimizadas): no repetir materia el mismo día, minimizar huecos (horas libres) de cada grupo.
+Dev con recarga: `cd web && npm run dev` (proxy a FastAPI en 8000).
 
-Resultado sobre el ejemplo (hora 55 min, 2 descansos, bloques, topes): **ÓPTIMO, 0 huecos, 0 repeticiones**.
+## Piezas
+- `engine.py` — motor OR-Tools CP-SAT (config → horario). Restricciones duras: choques docente/grupo/salón, disponibilidad y tope de horario, intensidad, salón por tipo permitido, bloques que no cruzan descanso. Blandas: no repetir materia el mismo día, minimizar huecos.
+- `api/main.py` — FastAPI: `/api/example`, `/api/solve`, sirve el frontend.
+- `web/` — React + Vite + Zustand + Tailwind (paleta cívica). Configuración editable + generar + horario por grupo/docente + export CSV.
+- `solve.py` / `gen_school.py` — CLI del motor y generador de colegio grande para pruebas de escala.
 
-## Escala
-`python gen_school.py config.big.json` genera un colegio realista (18 grupos, 25 docentes, 180 tareas). Resultado: **ÓPTIMO en ~11s, 0 huecos** a 8 periodos/día. A 7 periodos (rejilla muy chica para 29h/semana) detecta **infactibilidad en ~5s** — señal útil de que falta capacidad.
+Motor validado: colegio real (18 grupos, 25 docentes) ÓPTIMO en ~11s. UI probada de punta a punta.
 
-## Estado
-Motor validado (genera bien + escala). Siguiente: preferencias/pesos por restricción, más soft (docente sin huecos, materias pesadas temprano), UI de configuración, empaquetado offline, landing SEO.
+## Siguiente
+Import Excel de docentes/cargas, ajuste manual del horario, más soft con peso, empaquetado offline (PyInstaller), landing SEO.
