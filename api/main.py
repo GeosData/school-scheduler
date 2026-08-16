@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from engine import solve, validate
+from store_db import load_workspace, save_workspace
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST = os.path.join(ROOT, "web", "dist")
@@ -19,6 +20,17 @@ app = FastAPI(title="school-scheduler")
 def example():
     with open(os.path.join(ROOT, "config.example.json"), encoding="utf-8") as f:
         return json.load(f)
+
+
+@app.get("/api/workspace")
+def get_workspace():
+    return {"data": load_workspace()}
+
+
+@app.put("/api/workspace")
+def put_workspace(body: dict):
+    save_workspace(body.get("data"))
+    return {"status": "ok"}
 
 
 @app.post("/api/solve")

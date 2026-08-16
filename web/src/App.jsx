@@ -34,8 +34,15 @@ const LABEL = Object.fromEntries(NAV.flatMap((s) => s.items).map((n) => [n.id, n
 const SECTIONS = { inicio: Inicio, importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, preferencias: Preferencias, generar: Generar, horario: Timetable };
 
 export default function App() {
-  const { view, setView, loadExample, subjects, openTutorial, levels, activeId, selectLevel, addLevel, renameLevel, removeLevel } = useStore();
-  useEffect(() => { if (!subjects.length) loadExample(); }, []);
+  const { view, setView, loadExample, openTutorial, levels, activeId, selectLevel, addLevel, renameLevel, removeLevel, loadWorkspace, exportProject, importProject } = useStore();
+  useEffect(() => {
+    (async () => {
+      const restored = await loadWorkspace();
+      if (!restored) await loadExample();
+      useStore.setState({ hydrated: true });
+      useStore.getState().saveWorkspace();
+    })();
+  }, []);
   const Active = SECTIONS[view];
   const idx = ORDER.indexOf(view);
   const next = idx >= 0 && idx < ORDER.length - 1 ? ORDER[idx + 1] : null;
@@ -83,6 +90,16 @@ export default function App() {
               ))}
             </div>
           ))}
+        </div>
+        <div className="mt-4 border-t border-line pt-3">
+          <div className="mb-1 px-1 text-[11px] font-semibold uppercase tracking-wide text-muted">Proyecto</div>
+          <div className="flex gap-3 px-1 text-xs text-muted">
+            <button className="hover:underline" onClick={exportProject}>Guardar copia</button>
+            <label className="cursor-pointer hover:underline">Abrir
+              <input type="file" accept=".json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) importProject(f); e.target.value = ""; }} />
+            </label>
+          </div>
+          <div className="mt-1 px-1 text-[10px] text-muted">Se guarda solo; usa "Guardar copia" para respaldar o mover a otro PC.</div>
         </div>
       </nav>
       <main className="p-5 md:p-8">

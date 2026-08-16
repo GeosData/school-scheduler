@@ -22,6 +22,7 @@ export const useStore = create((set, get) => ({
 
   ...blankData(),
   solving: false,
+  hydrated: false,
   view: "inicio",
   tutorial: typeof localStorage !== "undefined" && !localStorage.getItem("hs_tutorial_seen"),
 
@@ -34,6 +35,46 @@ export const useStore = create((set, get) => ({
   snapshot: () => {
     const s = get();
     return { grid: s.grid, subjects: s.subjects, rooms: s.rooms, teachers: s.teachers, groups: s.groups, tasks: s.tasks, rules: s.rules, result: s.result, error: s.error };
+  },
+
+  buildWorkspace: () => {
+    const s = get();
+    return { levels: s.levels, activeId: s.activeId, data: { ...s.saved, [s.activeId]: s.snapshot() } };
+  },
+  restoreWorkspace: (w) => {
+    if (!(w && Array.isArray(w.levels) && w.levels.length && w.data)) return false;
+    const activeId = w.data[w.activeId] ? w.activeId : w.levels[0].id;
+    const active = w.data[activeId] || blankData();
+    const saved = { ...w.data }; delete saved[activeId];
+    set({ levels: w.levels, activeId, saved, ...active });
+    return true;
+  },
+  saveWorkspace: async () => {
+    if (!get().hydrated) return;
+    try {
+      await fetch("/api/workspace", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: get().buildWorkspace() }) });
+    } catch (e) { /* offline */ }
+  },
+  loadWorkspace: async () => {
+    try {
+      const r = await (await fetch("/api/workspace")).json();
+      return get().restoreWorkspace(r.data);
+    } catch (e) { return false; }
+  },
+  exportProject: () => {
+    const blob = new Blob([JSON.stringify(get().buildWorkspace(), null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "proyecto-horarios.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  },
+  importProject: async (file) => {
+    try {
+      const ok = get().restoreWorkspace(JSON.parse(await file.text()));
+      if (ok) get().saveWorkspace();
+      return ok;
+    } catch (e) { return false; }
   },
   selectLevel: (id) => {
     const s = get();
@@ -121,3 +162,12 @@ export const useStore = create((set, get) => ({
     }
   },
 }));
+
+let _saveTimer;
+useStore.subscribe((s, p) => {
+  if (!s.hydrated) return;
+  const changed = ["levels", "saved", "activeId", "grid", "subjects", "rooms", "teachers", "groups", "tasks", "rules", "result"].some((k) => s[k] !== p[k]);
+  if (!changed) return;
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => useStore.getState().saveWorkspace(), 700);
+});

@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from engine import solve, validate
+from store_db import load_workspace, save_workspace
 
 
 def resource(*parts):
@@ -25,6 +26,17 @@ app = FastAPI(title="Horarios Escolares")
 def example():
     with open(resource("config.example.json"), encoding="utf-8") as f:
         return json.load(f)
+
+
+@app.get("/api/workspace")
+def get_workspace():
+    return {"data": load_workspace()}
+
+
+@app.put("/api/workspace")
+def put_workspace(body: dict):
+    save_workspace(body.get("data"))
+    return {"status": "ok"}
 
 
 @app.post("/api/solve")
