@@ -45,6 +45,71 @@ export default function Timetable() {
     URL.revokeObjectURL(a.href);
   }
 
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function exportImage() {
+    const scale = 2, pad = 22, hourW = 52, dayW = 158, rowH = 60, headH = 40, titleH = 66, breakH = 24;
+    const W = pad * 2 + hourW + days.length * dayW;
+    let gridH = 0;
+    for (let p = 0; p < P; p++) { gridH += rowH; if (breaks.has(p) && p < P - 1) gridH += breakH; }
+    const H = pad * 2 + titleH + headH + gridH;
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale; canvas.height = H * scale;
+    const ctx = canvas.getContext("2d");
+    ctx.scale(scale, scale);
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, H);
+
+    ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+    ctx.fillStyle = "#16233d"; ctx.font = "700 24px Lexend, Segoe UI, sans-serif";
+    ctx.fillText(`Horario · ${current}`, pad, pad + 24);
+    ctx.fillStyle = "#51607a"; ctx.font = "13px Lexend, Segoe UI, sans-serif";
+    ctx.fillText(`Hora de ${result.periodMinutes} min · vista por ${mode === "group" ? "grupo" : "docente"}`, pad, pad + 46);
+
+    const ox = pad, oy = pad + titleH;
+    ctx.textBaseline = "middle"; ctx.textAlign = "center";
+    ctx.fillStyle = "#51607a"; ctx.font = "700 13px Lexend, Segoe UI, sans-serif";
+    days.forEach((d, di) => ctx.fillText(d, ox + hourW + di * dayW + dayW / 2, oy + headH / 2));
+
+    let y = oy + headH;
+    for (let p = 0; p < P; p++) {
+      ctx.fillStyle = "#51607a"; ctx.font = "700 13px Lexend, Segoe UI, sans-serif";
+      ctx.fillText(`H${p + 1}`, ox + hourW / 2, y + rowH / 2);
+      days.forEach((_, di) => {
+        const c = data.grid[di][p];
+        const cx = ox + hourW + di * dayW;
+        if (c) {
+          ctx.fillStyle = colorFor(c.subject, subjectKeys);
+          roundRect(ctx, cx + 3, y + 4, dayW - 6, rowH - 8, 9); ctx.fill();
+          ctx.fillStyle = "#16233d"; ctx.font = "700 14px Lexend, Segoe UI, sans-serif";
+          ctx.fillText(c.subject, cx + dayW / 2, y + rowH / 2 - 9, dayW - 16);
+          ctx.fillStyle = "#51607a"; ctx.font = "11px Lexend, Segoe UI, sans-serif";
+          ctx.fillText(`${c.roomType} · ${mode === "group" ? c.teacher : c.group}`, cx + dayW / 2, y + rowH / 2 + 9, dayW - 16);
+        } else {
+          ctx.fillStyle = "#cbd5e1"; ctx.font = "14px Lexend, sans-serif";
+          ctx.fillText("·", cx + dayW / 2, y + rowH / 2);
+        }
+      });
+      y += rowH;
+      if (breaks.has(p) && p < P - 1) {
+        ctx.fillStyle = "#15803d"; ctx.font = "700 10px Lexend, Segoe UI, sans-serif";
+        ctx.fillText("D E S C A N S O", ox + hourW + (days.length * dayW) / 2, y + breakH / 2);
+        y += breakH;
+      }
+    }
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `horario-${current}.png`;
+    a.click();
+  }
+
   return (
     <section className="card">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -57,17 +122,30 @@ export default function Timetable() {
             <button className={"rounded-full px-3 py-1 " + (mode === "group" ? "bg-white text-primary-dark shadow" : "text-muted")} onClick={() => { setMode("group"); setSel(null); }}>Por grupo</button>
             <button className={"rounded-full px-3 py-1 " + (mode === "teacher" ? "bg-white text-primary-dark shadow" : "text-muted")} onClick={() => { setMode("teacher"); setSel(null); }}>Por docente</button>
           </div>
-          <button className="btn btn-ghost text-sm" onClick={exportCSV}>Exportar CSV</button>
+          <button className="btn btn-primary text-sm" onClick={exportImage}>Exportar imagen</button>
+          <button className="btn btn-ghost text-sm" onClick={exportCSV}>CSV</button>
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        {keys.map((k) => (
-          <button key={k} onClick={() => setSel(k)}
-            className={"rounded-lg px-3 py-1.5 text-sm font-semibold transition " + (k === current ? "bg-primary text-white" : "bg-slate-100 text-muted hover:bg-slate-200")}>
-            {k}
-          </button>
-        ))}
+      <div className="mb-4">
+        {keys.length > 12 ? (
+          <label className="flex items-center gap-2 text-sm text-muted">
+            {mode === "group" ? "Grupo" : "Docente"}:
+            <select className="input !w-auto min-w-[12rem]" value={current} onChange={(e) => setSel(e.target.value)}>
+              {keys.map((k) => <option key={k} value={k}>{k}</option>)}
+            </select>
+            <span className="text-xs">({keys.length})</span>
+          </label>
+        ) : (
+          <div className="flex flex-wrap gap-1.5">
+            {keys.map((k) => (
+              <button key={k} onClick={() => setSel(k)}
+                className={"rounded-lg px-3 py-1.5 text-sm font-semibold transition " + (k === current ? "bg-primary text-white" : "bg-slate-100 text-muted hover:bg-slate-200")}>
+                {k}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="overflow-x-auto">
