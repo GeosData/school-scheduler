@@ -67,13 +67,17 @@ def solve(cfg, time_limit=30.0):
     def occ(si, d, p):
         return [place[(si, dd, ps[0])] for (dd, ps) in sessions[si]["cand"] if dd == d and p in ps]
 
+    allow_free = cfg.get("allowFreePeriods", True)
     for g in groups:
         gs = [si for si, s in enumerate(sessions) if s["group"] == g]
         for d in range(D):
             for p in range(P):
                 terms = [t for si in gs for t in occ(si, d, p)]
-                if terms:
-                    model.Add(sum(terms) <= 1)
+                if allow_free:
+                    if terms:
+                        model.Add(sum(terms) <= 1)
+                else:
+                    model.Add(sum(terms) == 1)
 
     for tname in teachers:
         ts = [si for si, s in enumerate(sessions) if s["teacher"] == tname]
@@ -232,6 +236,8 @@ def solve(cfg, time_limit=30.0):
         "days": days,
         "periodsPerDay": P,
         "periodMinutes": cfg.get("periodMinutes"),
+        "startTime": cfg.get("startTime", "06:30"),
+        "breakMinutes": cfg.get("breakMinutes", 0),
         "breakAfterPeriods": sorted(breaks),
         "byGroup": {g: {"grid": by_group[g], "holes": count_holes(by_group[g])} for g in groups},
         "byTeacher": {t: {"grid": by_teacher[t]} for t in teachers},

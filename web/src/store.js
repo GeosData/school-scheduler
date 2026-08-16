@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export const useStore = create((set, get) => ({
-  grid: { days: ["Lun", "Mar", "Mie", "Jue", "Vie"], periodMinutes: 55, periodsPerDay: 8, breakAfterPeriods: [2, 5] },
+  grid: { days: ["Lun", "Mar", "Mie", "Jue", "Vie"], periodMinutes: 55, startTime: "06:30", breakMinutes: 15, periodsPerDay: 8, breakAfterPeriods: [2, 5], allowFreePeriods: true },
   subjects: [],
   rooms: [],
   teachers: [],
@@ -39,7 +39,7 @@ export const useStore = create((set, get) => ({
   async loadExample() {
     const c = await (await fetch("/api/example")).json();
     set({
-      grid: { days: c.days, periodMinutes: c.periodMinutes, periodsPerDay: c.periodsPerDay, breakAfterPeriods: c.breakAfterPeriods },
+      grid: { days: c.days, periodMinutes: c.periodMinutes, startTime: c.startTime || "06:30", breakMinutes: c.breakMinutes ?? 15, periodsPerDay: c.periodsPerDay, breakAfterPeriods: c.breakAfterPeriods, allowFreePeriods: c.allowFreePeriods !== false },
       subjects: Object.entries(c.subjects).map(([name, v]) => ({ name, allowedRoomTypes: v.allowedRoomTypes, block: v.block || 0, heavy: !!v.heavy })),
       rooms: Object.entries(c.roomTypes).map(([type, cap]) => ({ type, cap })),
       teachers: Object.entries(c.teachers).map(([name, v]) => ({ name, notAfterPeriod: v.notAfterPeriod, maxHoursPerDay: v.maxHoursPerDay })),
@@ -55,8 +55,11 @@ export const useStore = create((set, get) => ({
     return {
       days: s.grid.days,
       periodMinutes: Number(s.grid.periodMinutes),
+      startTime: s.grid.startTime || "06:30",
+      breakMinutes: Number(s.grid.breakMinutes) || 0,
       periodsPerDay: Number(s.grid.periodsPerDay),
       breakAfterPeriods: s.grid.breakAfterPeriods,
+      allowFreePeriods: s.grid.allowFreePeriods !== false,
       roomTypes: Object.fromEntries(s.rooms.filter((r) => r.type).map((r) => [r.type, Number(r.cap) || 1])),
       subjects: Object.fromEntries(s.subjects.filter((x) => x.name).map((x) => [x.name, { allowedRoomTypes: x.allowedRoomTypes, block: Number(x.block) || 0, heavy: !!x.heavy }])),
       groups: s.groups.filter(Boolean),

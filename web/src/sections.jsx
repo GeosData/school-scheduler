@@ -63,8 +63,14 @@ export function Rejilla() {
     <section className="card">
       <Head title="Rejilla y jornada" hint="Todo se genera desde acá: nada está fijo en el programa." />
       <div className="grid gap-4 sm:grid-cols-3">
+        <label className="block"><span className="text-sm text-muted">Hora de inicio<Tip text="A qué hora empieza la jornada. Con esto y la duración de la hora se calculan los horarios reales (7:00–7:55…)." /></span>
+          <input className="input mt-1" type="time" value={grid.startTime} onChange={(e) => setGrid({ startTime: e.target.value })} />
+        </label>
         <label className="block"><span className="text-sm text-muted">Minutos por hora<Tip text="Cuánto dura una hora de clase en tu colegio (45, 50, 55, 60…). De aquí sale la rejilla." /></span>
           <input className="input mt-1" type="number" value={grid.periodMinutes} onChange={(e) => setGrid({ periodMinutes: e.target.value })} />
+        </label>
+        <label className="block"><span className="text-sm text-muted">Minutos de descanso<Tip text="Cuánto dura cada recreo. Se usa para calcular las horas reales de las clases que van después del descanso." /></span>
+          <input className="input mt-1" type="number" value={grid.breakMinutes} onChange={(e) => setGrid({ breakMinutes: e.target.value })} />
         </label>
         <label className="block"><span className="text-sm text-muted">Horas por día</span>
           <input className="input mt-1" type="number" value={grid.periodsPerDay} onChange={(e) => setGrid({ periodsPerDay: e.target.value })} />
@@ -84,6 +90,16 @@ export function Rejilla() {
           ))}
         </div>
         <p className="mt-2 text-xs text-muted">Marca tras cuáles horas hay recreo. Un bloque no se parte por un descanso.</p>
+      </div>
+      <div className="mt-5 flex items-center gap-3 rounded-xl border border-line bg-[#fbfdff] p-3">
+        <button onClick={() => setGrid({ allowFreePeriods: !grid.allowFreePeriods })}
+          className={"relative h-6 w-11 shrink-0 rounded-full transition " + (grid.allowFreePeriods ? "bg-accent" : "bg-slate-300")}>
+          <span className={"absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all " + (grid.allowFreePeriods ? "left-[22px]" : "left-0.5")} />
+        </button>
+        <div className="flex-1">
+          <div className="font-semibold text-ink">Permitir horas libres en los grupos</div>
+          <div className="text-xs text-muted">Si lo apagas, cada grupo debe tener todas sus horas ocupadas. La jornada tiene que cuadrar con la carga (horas/día × días = horas semanales del grupo); si no cuadra, no se podrá generar.</div>
+        </div>
       </div>
     </section>
   );
