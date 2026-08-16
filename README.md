@@ -23,3 +23,13 @@ Motor validado: colegio real (18 grupos, 25 docentes) ÓPTIMO en ~11s. UI probad
 
 ## Siguiente
 Import Excel de docentes/cargas, ajuste manual del horario, más soft con peso, empaquetado offline (PyInstaller), landing SEO.
+
+## Empaquetar offline (.exe de Windows)
+
+```bash
+pip install pyinstaller
+cd web && npm run build && cd ..
+pyinstaller --noconfirm --onefile --name Horarios-Escolar   --add-data "web/dist;web/dist" --add-data "config.example.json;."   --collect-all ortools --collect-all uvicorn --collect-all fastapi --collect-all starlette app.py
+```
+
+Resultado: `dist/Horarios-Escolar.exe` (~74 MB). Doble clic: levanta el server en localhost y abre el navegador. **No necesita Python instalado ni internet** — el intérprete y OR-Tools van dentro del .exe. `app.py` es el punto de entrada (rutas via `sys._MEIPASS`).

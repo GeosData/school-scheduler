@@ -4,15 +4,25 @@ import { Importar, Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Generar
 import Timetable from "./Timetable.jsx";
 
 const NAV = [
-  { id: "importar", label: "Importar Excel" },
-  { id: "rejilla", label: "Rejilla y jornada" },
-  { id: "materias", label: "Materias" },
-  { id: "salones", label: "Salones" },
-  { id: "docentes", label: "Docentes" },
-  { id: "grupos", label: "Grupos" },
-  { id: "cargas", label: "Cargas académicas" },
-  { id: "generar", label: "Generar" },
-  { id: "horario", label: "Horario" },
+  {
+    group: "Configuración",
+    items: [
+      { id: "importar", label: "Importar Excel" },
+      { id: "rejilla", label: "Rejilla y jornada" },
+      { id: "materias", label: "Materias" },
+      { id: "salones", label: "Salones" },
+      { id: "docentes", label: "Docentes" },
+      { id: "grupos", label: "Grupos" },
+      { id: "cargas", label: "Cargas académicas" },
+    ],
+  },
+  {
+    group: "Generar horario",
+    items: [
+      { id: "generar", label: "Generar" },
+      { id: "horario", label: "Horario" },
+    ],
+  },
 ];
 
 const SECTIONS = { importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, generar: Generar, horario: Timetable };
@@ -33,11 +43,16 @@ export default function App() {
         </div>
         <button className="btn btn-ghost mb-4 w-full justify-center text-sm" onClick={loadExample}>Cargar ejemplo</button>
         <div className="flex flex-col gap-1">
-          {NAV.map((n) => (
-            <button key={n.id} onClick={() => setView(n.id)}
-              className={"rounded-lg px-3 py-2 text-left text-sm transition " + (view === n.id ? "bg-[#e7effc] font-semibold text-primary-dark" : "text-muted hover:bg-[#eef3fb]")}>
-              {n.label}
-            </button>
+          {NAV.map((sec, i) => (
+            <div key={sec.group} className={i > 0 ? "mt-3 border-t border-line pt-3" : ""}>
+              <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">{sec.group}</p>
+              {sec.items.map((n) => (
+                <button key={n.id} onClick={() => setView(n.id)}
+                  className={"w-full rounded-lg px-3 py-2 text-left text-sm transition " + (view === n.id ? "bg-[#e7effc] font-semibold text-primary-dark" : "text-muted hover:bg-[#eef3fb]")}>
+                  {n.label}
+                </button>
+              ))}
+            </div>
           ))}
         </div>
       </nav>
