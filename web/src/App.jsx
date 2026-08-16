@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { useStore } from "./store";
-import { Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Generar } from "./sections.jsx";
+import { Importar, Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Generar } from "./sections.jsx";
 import Timetable from "./Timetable.jsx";
 
 const NAV = [
+  { id: "importar", label: "Importar Excel" },
   { id: "rejilla", label: "Rejilla y jornada" },
   { id: "materias", label: "Materias" },
   { id: "salones", label: "Salones" },
@@ -14,7 +15,7 @@ const NAV = [
   { id: "horario", label: "Horario" },
 ];
 
-const SECTIONS = { rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, generar: Generar, horario: Timetable };
+const SECTIONS = { importar: Importar, rejilla: Rejilla, materias: Materias, salones: Salones, docentes: Docentes, grupos: Grupos, cargas: Cargas, generar: Generar, horario: Timetable };
 
 export default function App() {
   const { view, setView, loadExample, subjects } = useStore();

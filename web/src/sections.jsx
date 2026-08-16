@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useStore } from "./store";
 
 function Head({ title, hint }) {
@@ -171,6 +172,83 @@ export function Cargas() {
       </div>
       <button className="btn btn-ghost mt-3 text-sm" onClick={() => set2("tasks", [...tasks, { teacher: "", subject: "", group: "", weekly: 1 }])}><Plus /> Agregar carga</button>
       <p className="mt-3 text-sm text-muted">{tasks.length} cargas.</p>
+    </section>
+  );
+}
+
+export function Importar() {
+  const { set2, setView } = useStore();
+  const [msg, setMsg] = useState("");
+
+  async function downloadTemplate() {
+    const XLSX = await import("xlsx");
+    const wb = XLSX.utils.book_new();
+    const add = (name, rows, cols) => {
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      if (cols) ws["!cols"] = cols;
+      XLSX.utils.book_append_sheet(wb, ws, name);
+    };
+    add("Docentes", [["Nombre", "No despues de (hora, opcional)", "Max horas/dia"], ["Prof-Mate", "", "6"], ["Prof-Sociales", "4", "6"]], [{ wch: 18 }, { wch: 26 }, { wch: 14 }]);
+    add("Materias", [["Materia", "Tipos de salon (separados por coma)", "Bloque (0=suelta, 2=de a dos)"], ["Matematicas", "aula", "2"], ["Quimica", "aula, laboratorio", "2"], ["Tecnologia", "aula, sistemas", "0"]], [{ wch: 16 }, { wch: 34 }, { wch: 28 }]);
+    add("Salones", [["Tipo", "Cantidad"], ["aula", "18"], ["laboratorio", "2"], ["sistemas", "2"], ["cancha", "2"]], [{ wch: 16 }, { wch: 10 }]);
+    add("Grupos", [["Grupo"], ["6-1"], ["6-2"], ["11-3"]], [{ wch: 10 }]);
+    add("Cargas", [["Docente", "Materia", "Grupo", "Horas/semana"], ["Prof-Mate", "Matematicas", "6-1", "5"], ["Prof-Sociales", "Sociales", "6-1", "3"]], [{ wch: 18 }, { wch: 16 }, { wch: 10 }, { wch: 14 }]);
+    XLSX.writeFile(wb, "plantilla-horarios.xlsx");
+  }
+
+  async function importFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setMsg("Leyendo…");
+    try {
+      const XLSX = await import("xlsx");
+      const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
+      const sheet = (name) => wb.Sheets[Object.keys(wb.Sheets).find((k) => k.toLowerCase().startsWith(name.slice(0, 4).toLowerCase()))];
+      const rowsOf = (name) => {
+        const ws = sheet(name);
+        if (!ws) return [];
+        const r = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false });
+        return r.slice(1).map((row) => row.map((c) => (c == null ? "" : String(c).trim())));
+      };
+      const D = rowsOf("Docentes").filter((r) => r[0]).map((r) => ({ name: r[0], notAfterPeriod: r[1] ?? "", maxHoursPerDay: r[2] || 6 }));
+      const M = rowsOf("Materias").filter((r) => r[0]).map((r) => ({ name: r[0], allowedRoomTypes: (r[1] || "").split(/[,;]+/).map((x) => x.trim()).filter(Boolean), block: Number(r[2]) || 0 }));
+      const S = rowsOf("Salones").filter((r) => r[0]).map((r) => ({ type: r[0], cap: Number(r[1]) || 1 }));
+      const G = rowsOf("Grupos").filter((r) => r[0]).map((r) => r[0]);
+      const C = rowsOf("Cargas").filter((r) => r[0]).map((r) => ({ teacher: r[0], subject: r[1], group: r[2], weekly: Number(r[3]) || 0 }));
+      const applied = [];
+      if (D.length) { set2("teachers", D); applied.push(`${D.length} docentes`); }
+      if (M.length) { set2("subjects", M); applied.push(`${M.length} materias`); }
+      if (S.length) { set2("rooms", S); applied.push(`${S.length} salones`); }
+      if (G.length) { set2("groups", G); applied.push(`${G.length} grupos`); }
+      if (C.length) { set2("tasks", C); applied.push(`${C.length} cargas`); }
+      setMsg(applied.length ? `Importado: ${applied.join(", ")}. Revisa las secciones y pulsa Generar.` : "No se encontraron hojas conocidas (Docentes, Materias, Salones, Grupos, Cargas).");
+    } catch (err) {
+      setMsg("No se pudo leer el archivo. ¿Es un Excel válido?");
+    }
+  }
+
+  return (
+    <section className="card">
+      <Head title="Importar desde Excel" hint="Descarga la plantilla, llénala con los datos del colegio y súbela. Cada hoja llena una sección." />
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="btn btn-primary cursor-pointer">
+          Subir Excel
+          <input type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={importFile} />
+        </label>
+        <button className="btn btn-ghost" onClick={downloadTemplate}>Descargar plantilla .xlsx</button>
+      </div>
+      {msg && <p className="mt-4 rounded-xl border border-line bg-[#f4fbf6] p-3 text-sm">{msg}</p>}
+      <div className="mt-5 text-sm text-muted">
+        <p className="mb-1 font-semibold">Hojas del libro:</p>
+        <ul className="list-disc pl-5">
+          <li><b>Docentes</b>: nombre, hora tope (opcional), máx horas/día.</li>
+          <li><b>Materias</b>: nombre, tipos de salón (coma), bloque (0 o tamaño).</li>
+          <li><b>Salones</b>: tipo, cantidad.</li>
+          <li><b>Grupos</b>: un grupo por fila.</li>
+          <li><b>Cargas</b>: docente, materia, grupo, horas/semana.</li>
+        </ul>
+      </div>
     </section>
   );
 }
