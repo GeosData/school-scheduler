@@ -251,9 +251,12 @@ def solve(cfg, time_limit=30.0):
     solver.parameters.random_seed = 1
     status = solver.Solve(model)
 
-    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+    if status == cp_model.INFEASIBLE:
         return {"status": "INFEASIBLE",
-                "message": "No se encontro un horario que cumpla todas las restricciones. Revisa la carga contra las franjas disponibles, los topes de docente o los salones."}
+                "message": "No existe un horario posible con estos datos. Revisa la carga contra las franjas disponibles, los topes de docente o los salones (por ejemplo, un grupo con mas horas que franjas, o un docente con demasiadas horas dentro de su tope)."}
+    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        return {"status": "TIMEOUT",
+                "message": "El horario es muy ajustado y no se alcanzo a encontrar una solucion en el tiempo dado. Vuelve a generar (a veces la encuentra al segundo intento), o dale mas tiempo aflojando alguna restriccion (mas franjas, menos horas por bloque o menos topes de docente)."}
 
     def empty_grid():
         return [[None for _ in range(P)] for _ in range(D)]

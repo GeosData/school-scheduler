@@ -47,7 +47,7 @@ export function Inicio() {
       <div className="rounded-xl border border-line bg-[#f4fbf6] p-4">
         <p className="mb-3 text-sm text-muted">Ya cargamos un <b>colegio de ejemplo</b> para que veas cómo queda. Genéralo con un clic, y luego reemplázalo con los datos de tu colegio.</p>
         <div className="flex flex-wrap gap-2">
-          <button className="btn btn-accent" disabled={solving || !subjects.length} onClick={() => solve(10)}>{solving ? "Armando el horario…" : "Ver un horario de ejemplo"}</button>
+          <button className="btn btn-accent" disabled={solving || !subjects.length} onClick={() => solve(12)}>{solving ? "Armando el horario…" : "Ver un horario de ejemplo"}</button>
           <button className="btn btn-ghost" onClick={() => setView("importar")}>Cargar mis datos (Excel)</button>
         </div>
         {solving && <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" /> Armando el horario sin choques, unos segundos…</p>}

@@ -161,14 +161,15 @@ export const useStore = create((set, get) => ({
     };
   },
 
-  async solve(timeLimit = 30) {
+  async solve(timeLimit = 30, _retried = false) {
     set({ solving: true, error: "", result: null });
     const cfg = get().buildConfig();
     cfg._timeLimit = timeLimit;
     try {
       const data = await (await fetch("/api/solve", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cfg) })).json();
       if (data.status === "INVALID") set({ error: data.message + "\n• " + (data.problems || []).join("\n• "), solving: false });
-      else if (data.status === "INFEASIBLE" || data.status === "ERROR") set({ error: data.message || "No se pudo generar.", solving: false });
+      else if (data.status === "TIMEOUT" && !_retried) { get().pushToast("El horario está ajustado, reintentando…", "info"); return get().solve(Math.round(timeLimit * 1.7), true); }
+      else if (data.status === "INFEASIBLE" || data.status === "ERROR" || data.status === "TIMEOUT") set({ error: data.message || "No se pudo generar.", solving: false });
       else { set({ result: data, solving: false, view: "horario" }); get().pushToast("Horario listo", "ok"); }
     } catch (e) {
       set({ error: "No se pudo conectar con el motor de horarios. Revisa que la aplicación siga abierta e inténtalo de nuevo.", solving: false });

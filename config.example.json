@@ -140,11 +140,11 @@
    "maxHoursPerDay": 6
   },
   "Bio-1": {
-   "notAfterPeriod": 4,
+   "notAfterPeriod": 5,
    "maxHoursPerDay": 6
   },
   "EdF-1": {
-   "notAfterPeriod": 4,
+   "notAfterPeriod": 5,
    "maxHoursPerDay": 6
   },
   "Art-1": {

@@ -49,7 +49,7 @@ def build():
     for tname, info in teachers.items():
         na = None
         if not info["block"] and info["load"] <= 14 and part_time < 2:
-            na = 4
+            na = PERIODS_PER_DAY - 1
             part_time += 1
         out_teachers[tname] = {"notAfterPeriod": na, "maxHoursPerDay": 6}
 
