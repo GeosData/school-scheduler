@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useStore } from "./store";
 
 const PALETTE = ["#dbe7fb", "#d7efe0", "#fbe6d3", "#eddcfb", "#d4eef6", "#fbeecf", "#f8d9e6", "#e2efcf"];
@@ -24,9 +24,10 @@ function computeTimes(result) {
 }
 
 export default function Timetable() {
-  const { result, setView } = useStore();
+  const { result, setView, moveClass } = useStore();
   const [mode, setMode] = useState("group");
   const [sel, setSel] = useState(null);
+  const [picked, setPicked] = useState(null);
 
   if (!result) {
     return (
@@ -49,6 +50,13 @@ export default function Timetable() {
     const who = mode === "group" ? c.teacher : c.group;
     return c.roomType && c.roomType !== "aula" ? `${c.roomType} · ${who}` : who;
   };
+  const editable = mode === "group";
+  useEffect(() => { setPicked(null); }, [current, mode]);
+  function onCell(d, p, c) {
+    if (!editable) return;
+    if (c) setPicked((cur) => (cur && cur.d === d && cur.p === p ? null : { d, p }));
+    else if (picked) { moveClass(current, picked.d, picked.p, d, p); setPicked(null); }
+  }
 
   function exportCSV() {
     const rows = [["Hora", ...days]];
@@ -183,6 +191,9 @@ export default function Timetable() {
         )}
       </div>
 
+      {editable && (
+        <p className="mb-2 text-xs text-muted no-print">Ajuste manual: toca una clase y luego un espacio libre para moverla. {picked ? "Ahora toca dónde la quieres poner (o la misma clase para soltar)." : ""}</p>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
@@ -201,14 +212,17 @@ export default function Timetable() {
                   </td>
                   {days.map((_, d) => {
                     const c = data.grid[d][p];
+                    const isPicked = editable && picked && picked.d === d && picked.p === p;
                     return (
-                      <td key={d} className="border border-slate-300 p-0 align-middle" style={c ? { background: colorFor(c.subject, subjectKeys) } : {}}>
+                      <td key={d} onClick={editable ? () => onCell(d, p, c) : undefined}
+                        className={"border border-slate-300 p-0 align-middle " + (editable ? "cursor-pointer " : "") + (isPicked ? "ring-2 ring-inset ring-primary " : (editable && picked && !c ? "hover:bg-[#eef4ff] " : ""))}
+                        style={c ? { background: colorFor(c.subject, subjectKeys) } : {}}>
                         {c ? (
                           <div className="px-2 py-2 text-center">
                             <div className="font-bold text-ink">{c.subject}</div>
                             <div className="text-[11px] text-slate-600">{metaOf(c)}</div>
                           </div>
-                        ) : <div className="py-4 text-center text-slate-300">·</div>}
+                        ) : <div className="py-4 text-center text-slate-300">{editable && picked ? "＋" : "·"}</div>}
                       </td>
                     );
                   })}

@@ -174,6 +174,54 @@ export const useStore = create((set, get) => ({
       set({ error: "No se pudo conectar con el motor de horarios. Revisa que la aplicación siga abierta e inténtalo de nuevo.", solving: false });
     }
   },
+
+  moveClass: (group, fd, fp, td, tp) => {
+    const s = get();
+    const res = s.result;
+    if (!res || (fd === td && fp === tp)) return;
+    const g = res.byGroup[group];
+    const cell = g.grid[fd][fp];
+    if (!cell) return;
+    if (g.grid[td][tp]) { s.pushToast("Ahí ya hay una clase de este grupo", "error"); return; }
+    const teacher = cell.teacher;
+    const tGrid = res.byTeacher[teacher] && res.byTeacher[teacher].grid;
+    if (tGrid && tGrid[td][tp]) { s.pushToast(`${teacher} ya dicta a esa hora`, "error"); return; }
+    const teDef = s.teachers.find((t) => t.name === teacher);
+    const limit = teDef && teDef.notAfterPeriod !== "" && teDef.notAfterPeriod != null ? Number(teDef.notAfterPeriod) : null;
+    if (limit != null && tp >= limit) { s.pushToast(`${teacher} no puede dictar a esa hora (su tope es la ${limit}ª)`, "error"); return; }
+    const subj = s.subjects.find((x) => x.name === cell.subject);
+    const allowed = subj ? subj.allowedRoomTypes : [cell.roomType];
+    const capOf = (ty) => { const r = s.rooms.find((rr) => rr.type === ty); return r ? Number(r.cap) : 0; };
+    const usedAt = (ty) => Object.values(res.byGroup).reduce((n, gg) => n + (gg.grid[td][tp] && gg.grid[td][tp].roomType === ty ? 1 : 0), 0);
+    let chosen = null;
+    for (const ty of allowed) { if (usedAt(ty) < capOf(ty)) { chosen = ty; break; } }
+    if (!chosen) { s.pushToast("No hay salón libre de un tipo permitido a esa hora", "error"); return; }
+
+    const clone = (grid) => grid.map((row) => row.slice());
+    const byGroup = { ...res.byGroup };
+    byGroup[group] = { ...g, grid: clone(g.grid) };
+    byGroup[group].grid[fd][fp] = null;
+    byGroup[group].grid[td][tp] = { ...cell, roomType: chosen };
+    const byTeacher = { ...res.byTeacher };
+    if (byTeacher[teacher]) {
+      byTeacher[teacher] = { ...byTeacher[teacher], grid: clone(byTeacher[teacher].grid) };
+      byTeacher[teacher].grid[fd][fp] = null;
+      byTeacher[teacher].grid[td][tp] = { subject: cell.subject, roomType: chosen, group };
+    }
+    const P = res.periodsPerDay, D = res.days.length;
+    let holes = 0;
+    for (let d = 0; d < D; d++) {
+      const col = [];
+      for (let p = 0; p < P; p++) col.push(byGroup[group].grid[d][p] ? 1 : 0);
+      if (col.includes(1)) {
+        const a = col.indexOf(1), b = col.lastIndexOf(1);
+        holes += (b - a + 1) - col.slice(a, b + 1).reduce((x, y) => x + y, 0);
+      }
+    }
+    byGroup[group].holes = holes;
+    set({ result: { ...res, byGroup, byTeacher } });
+    s.pushToast("Clase movida", "ok");
+  },
 }));
 
 let _saveTimer;
