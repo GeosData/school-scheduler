@@ -144,9 +144,12 @@ def solve(cfg, time_limit=30.0):
             tv.append(v)
         model.AddExactlyOne(tv)
 
+    n_groups = len(groups)
     for d in range(D):
         for p in range(P):
             for ty, cap in room_cap.items():
+                if cap >= n_groups:
+                    continue
                 terms = []
                 for si, s in enumerate(sessions):
                     if ty not in s["types"]:
@@ -155,6 +158,9 @@ def solve(cfg, time_limit=30.0):
                     if not ot:
                         continue
                     e = sum(ot)
+                    if len(s["types"]) == 1:
+                        terms.append(e)
+                        continue
                     z = model.NewBoolVar(f"z_{si}_{d}_{p}_{ty}")
                     model.Add(z <= e)
                     model.Add(z <= uses_type[(si, ty)])
@@ -190,16 +196,24 @@ def solve(cfg, time_limit=30.0):
                     bv = model.NewBoolVar(f"b_{tag}_{oi}_{d}_{p}")
                     model.Add(bv == sum(terms)) if terms else model.Add(bv == 0)
                     busy.append(bv)
+                before = [None] * P
+                for p in range(1, P):
+                    bf = model.NewBoolVar(f"bf_{tag}_{oi}_{d}_{p}")
+                    model.AddMaxEquality(bf, [before[p - 1], busy[p - 1]] if before[p - 1] is not None else [busy[p - 1]])
+                    before[p] = bf
+                after = [None] * P
+                for p in range(P - 2, -1, -1):
+                    af = model.NewBoolVar(f"af_{tag}_{oi}_{d}_{p}")
+                    model.AddMaxEquality(af, [after[p + 1], busy[p + 1]] if after[p + 1] is not None else [busy[p + 1]])
+                    after[p] = af
                 for p in range(P):
-                    before = model.NewBoolVar(f"bf_{tag}_{oi}_{d}_{p}")
-                    after = model.NewBoolVar(f"af_{tag}_{oi}_{d}_{p}")
-                    model.AddMaxEquality(before, busy[:p]) if p > 0 else model.Add(before == 0)
-                    model.AddMaxEquality(after, busy[p + 1:]) if p < P - 1 else model.Add(after == 0)
+                    if before[p] is None or after[p] is None:
+                        continue
                     hole = model.NewBoolVar(f"h_{tag}_{oi}_{d}_{p}")
                     model.Add(hole <= 1 - busy[p])
-                    model.Add(hole <= before)
-                    model.Add(hole <= after)
-                    model.Add(hole >= before + after - busy[p] - 1)
+                    model.Add(hole <= before[p])
+                    model.Add(hole <= after[p])
+                    model.Add(hole >= before[p] + after[p] - busy[p] - 1)
                     out.append(hole)
         return out
 
