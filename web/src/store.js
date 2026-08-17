@@ -1,5 +1,10 @@
 import { create } from "zustand";
 
+export const APP_VERSION = "1.0.1";
+export const reportUrl = (err) =>
+  "https://horarios-escolares.geosdata.com/reportar?v=" + APP_VERSION +
+  (err ? "&err=" + encodeURIComponent(String(err).slice(0, 500)) : "");
+
 const DEFAULT_RULES = {
   noRepeatSameDay: { on: true, weight: 50 },
   groupGaps: { on: true, weight: 10 },

@@ -1,8 +1,10 @@
+import datetime
 import json
 import os
 import socket
 import sys
 import threading
+import traceback
 import webbrowser
 
 import uvicorn
@@ -11,7 +13,9 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from engine import solve, validate
-from store_db import load_workspace, save_workspace
+from store_db import db_path, load_workspace, save_workspace
+
+APP_VERSION = "1.0.1"
 
 
 def resource(*parts):
@@ -19,7 +23,21 @@ def resource(*parts):
     return os.path.join(base, *parts)
 
 
+def log_error(where, detail):
+    try:
+        path = os.path.join(os.path.dirname(db_path()), "errores.txt")
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(f"\n=== {datetime.datetime.now().isoformat()} · {where} · v{APP_VERSION} ===\n{detail}\n")
+    except Exception:
+        pass
+
+
 app = FastAPI(title="Horarios Escolares")
+
+
+@app.get("/api/version")
+def version():
+    return {"version": APP_VERSION}
 
 
 @app.get("/api/example")
@@ -47,7 +65,11 @@ def do_solve(cfg: dict):
     try:
         return solve(cfg, time_limit=float(cfg.get("_timeLimit", 30)))
     except KeyError as e:
-        return JSONResponse(status_code=400, content={"status": "ERROR", "message": f"Falta o no coincide: {e}"})
+        log_error("solve/KeyError", traceback.format_exc())
+        return JSONResponse(status_code=400, content={"status": "ERROR", "message": f"Falta o no coincide un dato: {e}. Revisa que docentes, materias y grupos coincidan con las cargas."})
+    except Exception as e:
+        log_error("solve", traceback.format_exc())
+        return JSONResponse(status_code=500, content={"status": "ERROR", "message": f"Ocurrió un error al generar el horario ({type(e).__name__}). Si vuelve a pasar, repórtalo desde el botón de la aplicación."})
 
 
 dist = resource("web", "dist")

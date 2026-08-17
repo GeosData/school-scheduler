@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useStore } from "./store";
+import { useStore, reportUrl } from "./store";
 import { Inicio, Importar, Rejilla, Materias, Salones, Docentes, Grupos, Cargas, Preferencias, Generar } from "./sections.jsx";
 import Timetable from "./Timetable.jsx";
 import Tutorial from "./Tutorial.jsx";
@@ -102,6 +102,10 @@ export default function App() {
             </label>
           </div>
           <div className="mt-1 px-1 text-[10px] text-muted">{lastSaved ? `Guardado ✓ ${lastSaved}` : "Se guarda solo."} · usa "Guardar copia" para respaldar.</div>
+          <a href={reportUrl()} target="_blank" rel="noreferrer" className="mt-3 flex items-center gap-1.5 px-1 text-[11px] text-muted hover:text-primary hover:underline">
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 9v4M12 17h.01M10.3 3.9l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0z" /></svg>
+            Reportar un problema
+          </a>
         </div>
       </nav>
       <main className="p-5 md:p-8">

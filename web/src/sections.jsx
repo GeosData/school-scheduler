@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { useStore } from "./store";
+import { useStore, reportUrl } from "./store";
+
+function ReportLink({ error }) {
+  return (
+    <a href={reportUrl(error)} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 9v4M12 17h.01M10.3 3.9l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0z" /></svg>
+      Reportar este problema
+    </a>
+  );
+}
 
 function Head({ title, hint }) {
   return (
@@ -51,7 +60,7 @@ export function Inicio() {
           <button className="btn btn-ghost" onClick={() => setView("importar")}>Cargar mis datos (Excel)</button>
         </div>
         {solving && <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" /> Armando el horario sin choques, unos segundos…</p>}
-        {error && <p className="mt-3 whitespace-pre-line rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-ink">{error}</p>}
+        {error && <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-ink"><p className="whitespace-pre-line">{error}</p><ReportLink error={error} /></div>}
         {!subjects.length && !error && <p className="mt-3 text-sm text-muted">Cargando el colegio de ejemplo…</p>}
       </div>
     </section>
@@ -439,7 +448,7 @@ export function Generar() {
       {hasData && !ready && <p className="mt-2 text-sm text-danger">Corrige los puntos en rojo para poder generar.</p>}
       {solving && <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" /> Armando el horario sin choques, esto puede tomar unos segundos…</p>}
       {error && (
-        <div className="mt-4 whitespace-pre-line rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-ink">{error}</div>
+        <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-ink"><p className="whitespace-pre-line">{error}</p><ReportLink error={error} /></div>
       )}
       {result && !error && (
         <div className="mt-4 rounded-xl border border-line bg-[#f4fbf6] p-4 text-sm">
