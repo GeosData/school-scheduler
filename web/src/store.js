@@ -129,16 +129,8 @@ export const useStore = create((set, get) => ({
   }),
 
   async loadExample() {
-    const c = await (await fetch("/api/example")).json();
-    set({
-      grid: { days: c.days, periodMinutes: c.periodMinutes, startTime: c.startTime || "06:30", breakMinutes: c.breakMinutes ?? 15, periodsPerDay: c.periodsPerDay, breakAfterPeriods: c.breakAfterPeriods, allowFreePeriods: c.allowFreePeriods !== false },
-      subjects: Object.entries(c.subjects).map(([name, v]) => ({ name, allowedRoomTypes: v.allowedRoomTypes, block: v.block || 0, heavy: !!v.heavy })),
-      rooms: Object.entries(c.roomTypes).map(([type, cap]) => ({ type, cap })),
-      teachers: Object.entries(c.teachers).map(([name, v]) => ({ name, notAfterPeriod: v.notAfterPeriod, maxHoursPerDay: v.maxHoursPerDay })),
-      groups: [...c.groups],
-      tasks: c.tasks.map((t) => ({ ...t })),
-      result: null, error: "",
-    });
+    const w = await (await fetch("/api/example")).json();
+    return get().restoreWorkspace(w);
   },
 
   buildConfig() {

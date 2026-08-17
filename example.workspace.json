@@ -1,0 +1,1464 @@
+{
+ "levels": [
+  {
+   "id": "n_pre",
+   "name": "Preescolar"
+  },
+  {
+   "id": "n_pri",
+   "name": "Primaria"
+  },
+  {
+   "id": "n_sec",
+   "name": "Secundaria"
+  }
+ ],
+ "activeId": "n_sec",
+ "data": {
+  "n_pre": {
+   "grid": {
+    "days": [
+     "Lun",
+     "Mar",
+     "Mie",
+     "Jue",
+     "Vie"
+    ],
+    "periodMinutes": 45,
+    "startTime": "07:00",
+    "breakMinutes": 20,
+    "periodsPerDay": 4,
+    "breakAfterPeriods": [
+     1
+    ],
+    "allowFreePeriods": false
+   },
+   "subjects": [
+    {
+     "name": "Dim. Comunicativa",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Dim. Cognitiva",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Dim. Corporal",
+     "allowedRoomTypes": [
+      "patio",
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Dim. Artistica",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Dim. Personal-Social",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ingles",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Exploracion del Medio",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    }
+   ],
+   "rooms": [
+    {
+     "type": "aula",
+     "cap": 3
+    },
+    {
+     "type": "patio",
+     "cap": 1
+    }
+   ],
+   "teachers": [
+    {
+     "name": "Titular A",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 4
+    },
+    {
+     "name": "Titular B",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 4
+    },
+    {
+     "name": "Titular C",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 4
+    },
+    {
+     "name": "Prof. Corporal",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 4
+    },
+    {
+     "name": "Prof. Artistica",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 4
+    },
+    {
+     "name": "Prof. Ingles Pre",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 4
+    }
+   ],
+   "groups": [
+    "Transicion A",
+    "Transicion B",
+    "Transicion C"
+   ],
+   "tasks": [
+    {
+     "teacher": "Titular A",
+     "subject": "Dim. Comunicativa",
+     "group": "Transicion A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular A",
+     "subject": "Dim. Cognitiva",
+     "group": "Transicion A",
+     "weekly": 4
+    },
+    {
+     "teacher": "Titular A",
+     "subject": "Dim. Personal-Social",
+     "group": "Transicion A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Titular A",
+     "subject": "Exploracion del Medio",
+     "group": "Transicion A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Corporal",
+     "subject": "Dim. Corporal",
+     "group": "Transicion A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Artistica",
+     "subject": "Dim. Artistica",
+     "group": "Transicion A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Pre",
+     "subject": "Ingles",
+     "group": "Transicion A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Titular B",
+     "subject": "Dim. Comunicativa",
+     "group": "Transicion B",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular B",
+     "subject": "Dim. Cognitiva",
+     "group": "Transicion B",
+     "weekly": 4
+    },
+    {
+     "teacher": "Titular B",
+     "subject": "Dim. Personal-Social",
+     "group": "Transicion B",
+     "weekly": 2
+    },
+    {
+     "teacher": "Titular B",
+     "subject": "Exploracion del Medio",
+     "group": "Transicion B",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Corporal",
+     "subject": "Dim. Corporal",
+     "group": "Transicion B",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Artistica",
+     "subject": "Dim. Artistica",
+     "group": "Transicion B",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Pre",
+     "subject": "Ingles",
+     "group": "Transicion B",
+     "weekly": 2
+    },
+    {
+     "teacher": "Titular C",
+     "subject": "Dim. Comunicativa",
+     "group": "Transicion C",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular C",
+     "subject": "Dim. Cognitiva",
+     "group": "Transicion C",
+     "weekly": 4
+    },
+    {
+     "teacher": "Titular C",
+     "subject": "Dim. Personal-Social",
+     "group": "Transicion C",
+     "weekly": 2
+    },
+    {
+     "teacher": "Titular C",
+     "subject": "Exploracion del Medio",
+     "group": "Transicion C",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Corporal",
+     "subject": "Dim. Corporal",
+     "group": "Transicion C",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Artistica",
+     "subject": "Dim. Artistica",
+     "group": "Transicion C",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Pre",
+     "subject": "Ingles",
+     "group": "Transicion C",
+     "weekly": 2
+    }
+   ],
+   "rules": {
+    "noRepeatSameDay": {
+     "on": true,
+     "weight": 50
+    },
+    "groupGaps": {
+     "on": true,
+     "weight": 10
+    },
+    "teacherGaps": {
+     "on": true,
+     "weight": 2
+    },
+    "heavyEarly": {
+     "on": false,
+     "weight": 10
+    }
+   },
+   "result": null,
+   "error": ""
+  },
+  "n_pri": {
+   "grid": {
+    "days": [
+     "Lun",
+     "Mar",
+     "Mie",
+     "Jue",
+     "Vie"
+    ],
+    "periodMinutes": 50,
+    "startTime": "06:30",
+    "breakMinutes": 15,
+    "periodsPerDay": 5,
+    "breakAfterPeriods": [
+     2
+    ],
+    "allowFreePeriods": false
+   },
+   "subjects": [
+    {
+     "name": "Matematicas",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 2,
+     "heavy": true
+    },
+    {
+     "name": "Lengua Castellana",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ciencias Naturales",
+     "allowedRoomTypes": [
+      "aula",
+      "laboratorio"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ciencias Sociales",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ingles",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ed. Fisica",
+     "allowedRoomTypes": [
+      "cancha",
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Artistica",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Tecnologia",
+     "allowedRoomTypes": [
+      "aula",
+      "sistemas"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Etica",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Religion",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    }
+   ],
+   "rooms": [
+    {
+     "type": "aula",
+     "cap": 5
+    },
+    {
+     "type": "laboratorio",
+     "cap": 1
+    },
+    {
+     "type": "cancha",
+     "cap": 1
+    },
+    {
+     "type": "sistemas",
+     "cap": 1
+    }
+   ],
+   "teachers": [
+    {
+     "name": "Titular 1A",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Titular 2A",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Titular 3A",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Titular 4A",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Titular 5A",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Prof. Naturales",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Prof. Ingles Prim",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Prof. Ed. Fisica Prim",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Prof. Artistica Prim",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    },
+    {
+     "name": "Prof. Tecnologia Prim",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 5
+    }
+   ],
+   "groups": [
+    "1A",
+    "2A",
+    "3A",
+    "4A",
+    "5A"
+   ],
+   "tasks": [
+    {
+     "teacher": "Titular 1A",
+     "subject": "Matematicas",
+     "group": "1A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 1A",
+     "subject": "Lengua Castellana",
+     "group": "1A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 1A",
+     "subject": "Ciencias Sociales",
+     "group": "1A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Titular 1A",
+     "subject": "Etica",
+     "group": "1A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 1A",
+     "subject": "Religion",
+     "group": "1A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Naturales",
+     "subject": "Ciencias Naturales",
+     "group": "1A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Prim",
+     "subject": "Ingles",
+     "group": "1A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Ed. Fisica Prim",
+     "subject": "Ed. Fisica",
+     "group": "1A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Artistica Prim",
+     "subject": "Artistica",
+     "group": "1A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Tecnologia Prim",
+     "subject": "Tecnologia",
+     "group": "1A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 2A",
+     "subject": "Matematicas",
+     "group": "2A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 2A",
+     "subject": "Lengua Castellana",
+     "group": "2A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 2A",
+     "subject": "Ciencias Sociales",
+     "group": "2A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Titular 2A",
+     "subject": "Etica",
+     "group": "2A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 2A",
+     "subject": "Religion",
+     "group": "2A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Naturales",
+     "subject": "Ciencias Naturales",
+     "group": "2A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Prim",
+     "subject": "Ingles",
+     "group": "2A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Ed. Fisica Prim",
+     "subject": "Ed. Fisica",
+     "group": "2A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Artistica Prim",
+     "subject": "Artistica",
+     "group": "2A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Tecnologia Prim",
+     "subject": "Tecnologia",
+     "group": "2A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 3A",
+     "subject": "Matematicas",
+     "group": "3A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 3A",
+     "subject": "Lengua Castellana",
+     "group": "3A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 3A",
+     "subject": "Ciencias Sociales",
+     "group": "3A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Titular 3A",
+     "subject": "Etica",
+     "group": "3A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 3A",
+     "subject": "Religion",
+     "group": "3A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Naturales",
+     "subject": "Ciencias Naturales",
+     "group": "3A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Prim",
+     "subject": "Ingles",
+     "group": "3A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Ed. Fisica Prim",
+     "subject": "Ed. Fisica",
+     "group": "3A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Artistica Prim",
+     "subject": "Artistica",
+     "group": "3A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Tecnologia Prim",
+     "subject": "Tecnologia",
+     "group": "3A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 4A",
+     "subject": "Matematicas",
+     "group": "4A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 4A",
+     "subject": "Lengua Castellana",
+     "group": "4A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 4A",
+     "subject": "Ciencias Sociales",
+     "group": "4A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Titular 4A",
+     "subject": "Etica",
+     "group": "4A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 4A",
+     "subject": "Religion",
+     "group": "4A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Naturales",
+     "subject": "Ciencias Naturales",
+     "group": "4A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Prim",
+     "subject": "Ingles",
+     "group": "4A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Ed. Fisica Prim",
+     "subject": "Ed. Fisica",
+     "group": "4A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Artistica Prim",
+     "subject": "Artistica",
+     "group": "4A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Tecnologia Prim",
+     "subject": "Tecnologia",
+     "group": "4A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 5A",
+     "subject": "Matematicas",
+     "group": "5A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 5A",
+     "subject": "Lengua Castellana",
+     "group": "5A",
+     "weekly": 5
+    },
+    {
+     "teacher": "Titular 5A",
+     "subject": "Ciencias Sociales",
+     "group": "5A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Titular 5A",
+     "subject": "Etica",
+     "group": "5A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Titular 5A",
+     "subject": "Religion",
+     "group": "5A",
+     "weekly": 1
+    },
+    {
+     "teacher": "Prof. Naturales",
+     "subject": "Ciencias Naturales",
+     "group": "5A",
+     "weekly": 3
+    },
+    {
+     "teacher": "Prof. Ingles Prim",
+     "subject": "Ingles",
+     "group": "5A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Ed. Fisica Prim",
+     "subject": "Ed. Fisica",
+     "group": "5A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Artistica Prim",
+     "subject": "Artistica",
+     "group": "5A",
+     "weekly": 2
+    },
+    {
+     "teacher": "Prof. Tecnologia Prim",
+     "subject": "Tecnologia",
+     "group": "5A",
+     "weekly": 1
+    }
+   ],
+   "rules": {
+    "noRepeatSameDay": {
+     "on": true,
+     "weight": 50
+    },
+    "groupGaps": {
+     "on": true,
+     "weight": 10
+    },
+    "teacherGaps": {
+     "on": true,
+     "weight": 2
+    },
+    "heavyEarly": {
+     "on": false,
+     "weight": 10
+    }
+   },
+   "result": null,
+   "error": ""
+  },
+  "n_sec": {
+   "grid": {
+    "days": [
+     "Lun",
+     "Mar",
+     "Mie",
+     "Jue",
+     "Vie"
+    ],
+    "periodMinutes": 55,
+    "startTime": "06:30",
+    "breakMinutes": 15,
+    "periodsPerDay": 6,
+    "breakAfterPeriods": [
+     2
+    ],
+    "allowFreePeriods": false
+   },
+   "subjects": [
+    {
+     "name": "Matematicas",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 2,
+     "heavy": true
+    },
+    {
+     "name": "Lengua Castellana",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ingles",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ciencias Sociales",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Quimica",
+     "allowedRoomTypes": [
+      "aula",
+      "laboratorio"
+     ],
+     "block": 2,
+     "heavy": true
+    },
+    {
+     "name": "Fisica",
+     "allowedRoomTypes": [
+      "aula",
+      "laboratorio"
+     ],
+     "block": 2,
+     "heavy": true
+    },
+    {
+     "name": "Biologia",
+     "allowedRoomTypes": [
+      "aula",
+      "laboratorio"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Ed. Fisica",
+     "allowedRoomTypes": [
+      "cancha",
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Artistica",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Tecnologia",
+     "allowedRoomTypes": [
+      "aula",
+      "sistemas"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Etica",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    },
+    {
+     "name": "Religion",
+     "allowedRoomTypes": [
+      "aula"
+     ],
+     "block": 0,
+     "heavy": false
+    }
+   ],
+   "rooms": [
+    {
+     "type": "aula",
+     "cap": 6
+    },
+    {
+     "type": "laboratorio",
+     "cap": 2
+    },
+    {
+     "type": "sistemas",
+     "cap": 2
+    },
+    {
+     "type": "cancha",
+     "cap": 2
+    }
+   ],
+   "teachers": [
+    {
+     "name": "Mat-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Mat-2",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Len-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Ing-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Soc-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Qui-1",
+     "notAfterPeriod": 5,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Fis-1",
+     "notAfterPeriod": 5,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Bio-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "EdF-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Art-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Tec-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Eti-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    },
+    {
+     "name": "Rel-1",
+     "notAfterPeriod": null,
+     "maxHoursPerDay": 6
+    }
+   ],
+   "groups": [
+    "6-1",
+    "7-1",
+    "8-1",
+    "9-1",
+    "10-1",
+    "11-1"
+   ],
+   "tasks": [
+    {
+     "teacher": "Mat-1",
+     "subject": "Matematicas",
+     "group": "6-1",
+     "weekly": 5
+    },
+    {
+     "teacher": "Mat-2",
+     "subject": "Matematicas",
+     "group": "7-1",
+     "weekly": 5
+    },
+    {
+     "teacher": "Mat-1",
+     "subject": "Matematicas",
+     "group": "8-1",
+     "weekly": 5
+    },
+    {
+     "teacher": "Mat-2",
+     "subject": "Matematicas",
+     "group": "9-1",
+     "weekly": 5
+    },
+    {
+     "teacher": "Mat-1",
+     "subject": "Matematicas",
+     "group": "10-1",
+     "weekly": 5
+    },
+    {
+     "teacher": "Mat-2",
+     "subject": "Matematicas",
+     "group": "11-1",
+     "weekly": 5
+    },
+    {
+     "teacher": "Len-1",
+     "subject": "Lengua Castellana",
+     "group": "6-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Len-1",
+     "subject": "Lengua Castellana",
+     "group": "7-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Len-1",
+     "subject": "Lengua Castellana",
+     "group": "8-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Len-1",
+     "subject": "Lengua Castellana",
+     "group": "9-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Len-1",
+     "subject": "Lengua Castellana",
+     "group": "10-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Len-1",
+     "subject": "Lengua Castellana",
+     "group": "11-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Ing-1",
+     "subject": "Ingles",
+     "group": "6-1",
+     "weekly": 3
+    },
+    {
+     "teacher": "Ing-1",
+     "subject": "Ingles",
+     "group": "7-1",
+     "weekly": 3
+    },
+    {
+     "teacher": "Ing-1",
+     "subject": "Ingles",
+     "group": "8-1",
+     "weekly": 3
+    },
+    {
+     "teacher": "Ing-1",
+     "subject": "Ingles",
+     "group": "9-1",
+     "weekly": 3
+    },
+    {
+     "teacher": "Ing-1",
+     "subject": "Ingles",
+     "group": "10-1",
+     "weekly": 3
+    },
+    {
+     "teacher": "Ing-1",
+     "subject": "Ingles",
+     "group": "11-1",
+     "weekly": 3
+    },
+    {
+     "teacher": "Soc-1",
+     "subject": "Ciencias Sociales",
+     "group": "6-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Soc-1",
+     "subject": "Ciencias Sociales",
+     "group": "7-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Soc-1",
+     "subject": "Ciencias Sociales",
+     "group": "8-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Soc-1",
+     "subject": "Ciencias Sociales",
+     "group": "9-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Soc-1",
+     "subject": "Ciencias Sociales",
+     "group": "10-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Soc-1",
+     "subject": "Ciencias Sociales",
+     "group": "11-1",
+     "weekly": 4
+    },
+    {
+     "teacher": "Qui-1",
+     "subject": "Quimica",
+     "group": "6-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Qui-1",
+     "subject": "Quimica",
+     "group": "7-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Qui-1",
+     "subject": "Quimica",
+     "group": "8-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Qui-1",
+     "subject": "Quimica",
+     "group": "9-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Qui-1",
+     "subject": "Quimica",
+     "group": "10-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Qui-1",
+     "subject": "Quimica",
+     "group": "11-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Fis-1",
+     "subject": "Fisica",
+     "group": "6-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Fis-1",
+     "subject": "Fisica",
+     "group": "7-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Fis-1",
+     "subject": "Fisica",
+     "group": "8-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Fis-1",
+     "subject": "Fisica",
+     "group": "9-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Fis-1",
+     "subject": "Fisica",
+     "group": "10-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Fis-1",
+     "subject": "Fisica",
+     "group": "11-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Bio-1",
+     "subject": "Biologia",
+     "group": "6-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Bio-1",
+     "subject": "Biologia",
+     "group": "7-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Bio-1",
+     "subject": "Biologia",
+     "group": "8-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Bio-1",
+     "subject": "Biologia",
+     "group": "9-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Bio-1",
+     "subject": "Biologia",
+     "group": "10-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Bio-1",
+     "subject": "Biologia",
+     "group": "11-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "EdF-1",
+     "subject": "Ed. Fisica",
+     "group": "6-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "EdF-1",
+     "subject": "Ed. Fisica",
+     "group": "7-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "EdF-1",
+     "subject": "Ed. Fisica",
+     "group": "8-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "EdF-1",
+     "subject": "Ed. Fisica",
+     "group": "9-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "EdF-1",
+     "subject": "Ed. Fisica",
+     "group": "10-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "EdF-1",
+     "subject": "Ed. Fisica",
+     "group": "11-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Art-1",
+     "subject": "Artistica",
+     "group": "6-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Art-1",
+     "subject": "Artistica",
+     "group": "7-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Art-1",
+     "subject": "Artistica",
+     "group": "8-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Art-1",
+     "subject": "Artistica",
+     "group": "9-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Art-1",
+     "subject": "Artistica",
+     "group": "10-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Art-1",
+     "subject": "Artistica",
+     "group": "11-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Tec-1",
+     "subject": "Tecnologia",
+     "group": "6-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Tec-1",
+     "subject": "Tecnologia",
+     "group": "7-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Tec-1",
+     "subject": "Tecnologia",
+     "group": "8-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Tec-1",
+     "subject": "Tecnologia",
+     "group": "9-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Tec-1",
+     "subject": "Tecnologia",
+     "group": "10-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Tec-1",
+     "subject": "Tecnologia",
+     "group": "11-1",
+     "weekly": 2
+    },
+    {
+     "teacher": "Eti-1",
+     "subject": "Etica",
+     "group": "6-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Eti-1",
+     "subject": "Etica",
+     "group": "7-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Eti-1",
+     "subject": "Etica",
+     "group": "8-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Eti-1",
+     "subject": "Etica",
+     "group": "9-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Eti-1",
+     "subject": "Etica",
+     "group": "10-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Eti-1",
+     "subject": "Etica",
+     "group": "11-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Rel-1",
+     "subject": "Religion",
+     "group": "6-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Rel-1",
+     "subject": "Religion",
+     "group": "7-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Rel-1",
+     "subject": "Religion",
+     "group": "8-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Rel-1",
+     "subject": "Religion",
+     "group": "9-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Rel-1",
+     "subject": "Religion",
+     "group": "10-1",
+     "weekly": 1
+    },
+    {
+     "teacher": "Rel-1",
+     "subject": "Religion",
+     "group": "11-1",
+     "weekly": 1
+    }
+   ],
+   "rules": {
+    "noRepeatSameDay": {
+     "on": true,
+     "weight": 50
+    },
+    "groupGaps": {
+     "on": true,
+     "weight": 10
+    },
+    "teacherGaps": {
+     "on": true,
+     "weight": 2
+    },
+    "heavyEarly": {
+     "on": false,
+     "weight": 10
+    }
+   },
+   "result": null,
+   "error": ""
+  }
+ }
+}

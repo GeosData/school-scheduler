@@ -24,7 +24,7 @@ app = FastAPI(title="Horarios Escolares")
 
 @app.get("/api/example")
 def example():
-    with open(resource("config.example.json"), encoding="utf-8") as f:
+    with open(resource("example.workspace.json"), encoding="utf-8") as f:
         return json.load(f)
 
 
