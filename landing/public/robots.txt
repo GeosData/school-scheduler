@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /reportar
+
+Sitemap: https://horarios-escolares.geosdata.com/sitemap-index.xml

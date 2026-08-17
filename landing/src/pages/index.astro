@@ -1,0 +1,213 @@
+---
+import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import { product } from '../config';
+import coordinadora from '../assets/coordinadora.jpg';
+import docentes2 from '../assets/docentes2.jpg';
+
+const faqs = [
+  { q: '¿Es realmente gratis?', a: 'Sí. Descargas el programa y lo usas sin costo ni licencia. No pide tarjeta ni registro.' },
+  { q: '¿Necesito internet para usarlo?', a: 'No. Todo corre en tu computador. Puedes armar el horario del colegio sin conexión, y los datos nunca salen de tu equipo.' },
+  { q: '¿Tengo que instalar algo complicado?', a: 'No. Es un solo archivo. Lo descargas, lo abres y se abre en tu navegador. No necesitas instalar Python ni ningún programa aparte.' },
+  { q: '¿Sirve para preescolar, primaria y secundaria?', a: 'Sí. Cada nivel maneja su propia jornada, sus áreas y sus intensidades horarias según el MEN (20 horas en preescolar, 25 en primaria, 30 en secundaria), y todo es configurable.' },
+  { q: '¿Puedo cargar mis datos desde Excel?', a: 'Sí. Descargas un archivo base ya lleno con el ejemplo, reemplazas los datos con los de tu colegio y lo subes. Cada hoja llena una sección.' },
+  { q: '¿En qué sistema funciona?', a: 'En Windows. Si usas otro sistema, escríbenos y te contamos las opciones.' },
+];
+
+const softwareLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: product.name,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Windows',
+  description: product.description,
+  url: product.site,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'COP' },
+  inLanguage: 'es-CO',
+};
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<Base>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(softwareLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  </Fragment>
+
+  <nav>
+    <div class="wrap">
+      <div class="brand">
+        <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 14h.01M12 14h.01M16 14h.01"/></svg></span>Horarios Escolares
+      </div>
+      <div class="nav-links">
+        <a href="#features">Qué hace</a>
+        <a href="#como">Cómo funciona</a>
+        <a href="#faq">Preguntas</a>
+        <a class="btn btn-primary" href={product.downloadUrl} style="padding:10px 18px;font-size:15px">Descargar gratis</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Gratis · Sin internet · Windows</span>
+        <h1>Arma el horario de tu colegio <span class="hl">sin choques</span>, en minutos.</h1>
+        <p class="lead">Carga docentes, materias, salones y cargas académicas. El programa genera el horario completo, sin cruces y respetando cada regla. Sin pelear con Excel.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href={product.downloadUrl}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+            Descargar gratis
+          </a>
+          <a class="btn btn-ghost" href="#como">Ver cómo funciona</a>
+        </div>
+        <div class="trust">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12l6 6L20 6"/></svg> No necesita internet</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12l6 6L20 6"/></svg> No instala nada raro</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12l6 6L20 6"/></svg> Preescolar, primaria y secundaria</span>
+        </div>
+      </div>
+      <div class="tt-card" aria-label="Ejemplo de horario generado">
+        <div class="tt-head"><b>Horario · 6-1</b><span class="tag">Óptimo · 0 choques</span></div>
+        <table class="tt">
+          <thead><tr><th>Hora</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="hcell">H1<small>6:30</small></td>
+              <td class="c1"><div class="subj">Matemáticas</div><div class="who">Mat-1</div></td>
+              <td class="c2"><div class="subj">Lengua</div><div class="who">Len-1</div></td>
+              <td class="c5"><div class="subj">Inglés</div><div class="who">Ing-1</div></td>
+              <td class="c1"><div class="subj">Matemáticas</div><div class="who">Mat-1</div></td>
+              <td class="c3"><div class="subj">Sociales</div><div class="who">Soc-1</div></td>
+            </tr>
+            <tr>
+              <td class="hcell">H2<small>7:25</small></td>
+              <td class="c2"><div class="subj">Lengua</div><div class="who">Len-1</div></td>
+              <td class="c4"><div class="subj">Química</div><div class="who">lab · Qui-1</div></td>
+              <td class="c5"><div class="subj">Inglés</div><div class="who">Ing-1</div></td>
+              <td class="c6"><div class="subj">Ética</div><div class="who">Eti-1</div></td>
+              <td class="c3"><div class="subj">Sociales</div><div class="who">Soc-1</div></td>
+            </tr>
+            <tr>
+              <td class="hcell">H3<small>8:20</small></td>
+              <td class="c7"><div class="subj">Ed. Física</div><div class="who">cancha</div></td>
+              <td class="c4"><div class="subj">Química</div><div class="who">lab · Qui-1</div></td>
+              <td class="c1"><div class="subj">Matemáticas</div><div class="who">Mat-1</div></td>
+              <td class="c2"><div class="subj">Lengua</div><div class="who">Len-1</div></td>
+              <td class="c6"><div class="subj">Religión</div><div class="who">Rel-1</div></td>
+            </tr>
+            <tr class="brk"><td colspan="6">D E S C A N S O</td></tr>
+            <tr>
+              <td class="hcell">H4<small>9:30</small></td>
+              <td class="c3"><div class="subj">Sociales</div><div class="who">Soc-1</div></td>
+              <td class="c5"><div class="subj">Física</div><div class="who">lab · Fis-1</div></td>
+              <td class="c2"><div class="subj">Lengua</div><div class="who">Len-1</div></td>
+              <td class="c1"><div class="subj">Matemáticas</div><div class="who">Mat-1</div></td>
+              <td class="c5"><div class="subj">Biología</div><div class="who">Bio-1</div></td>
+            </tr>
+            <tr>
+              <td class="hcell">H5<small>10:25</small></td>
+              <td class="c6"><div class="subj">Tecnología</div><div class="who">sistemas</div></td>
+              <td class="c1"><div class="subj">Matemáticas</div><div class="who">Mat-1</div></td>
+              <td class="c3"><div class="subj">Sociales</div><div class="who">Soc-1</div></td>
+              <td class="c7"><div class="subj">Artística</div><div class="who">Art-1</div></td>
+              <td class="c2"><div class="subj">Lengua</div><div class="who">Len-1</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </header>
+
+  <div class="strip">
+    <div class="wrap">
+      <span>Pensado para el <b>coordinador académico</b></span>
+      <span>Basado en las <b>áreas obligatorias del MEN</b></span>
+      <span>Decreto <b>1850 / Ley 115</b></span>
+    </div>
+  </div>
+
+  <section class="pad wrap">
+    <div class="split">
+      <div>
+        <span class="eyebrow">El problema</span>
+        <div class="sec-head" style="margin-top:14px"><h2>Cuadrar el horario a mano toma semanas.</h2></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12l6 6L20 6"/></svg><span>Un docente en dos grupos a la misma hora, química sin laboratorio libre, un curso con una hora muerta en la mitad… y a empezar de nuevo.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12l6 6L20 6"/></svg><span>Cada cambio de última hora rompe tres cosas más. La hoja de Excel se vuelve inmanejable.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12l6 6L20 6"/></svg><span>El programa hace ese trabajo por ti: respeta cada regla y no deja un solo cruce.</span></li>
+        </ul>
+      </div>
+      <div class="imgwrap"><Image src={coordinadora} alt="Docente frente a su clase en un colegio" width={900} loading="lazy" /></div>
+    </div>
+  </section>
+
+  <section class="pad" id="features" style="background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow">Qué hace</span><h2 style="margin-top:14px">Todo lo que un colegio real necesita.</h2><p>Nada está fijo por dentro: tú configuras las materias, las reglas, los salones y las jornadas de tu colegio.</p></div>
+      <div class="feat">
+        <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><h3>Cero choques, garantizado</h3><p>Ningún docente ni grupo en dos lugares a la vez. La química va a laboratorio, la tecnología a sistemas, cada materia a un salón permitido.</p></div>
+        <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><h3>Valida antes de generar</h3><p>Te avisa si un grupo tiene más horas que la jornada o si un docente no cabe en su horario. El botón solo se activa cuando todo cuadra.</p></div>
+        <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div><h3>Tres niveles del MEN</h3><p>Preescolar, primaria y secundaria, cada uno con su jornada, sus áreas y sus intensidades horarias. Todo configurable por institución.</p></div>
+        <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16l4.5-6 3.5 4 3-4L20 16"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></div><h3>Exporta a imagen e imprime</h3><p>Descarga el horario como imagen para compartir por WhatsApp con cada docente, o imprímelo directo con las horas reales.</p></div>
+        <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6m0 8v6M2 12h6m8 0h6"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Ajuste manual</h3><p>¿Quieres mover una clase? Tócala y el programa te muestra en verde solo los espacios donde sí puede ir, sin romper nada.</p></div>
+        <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M2 12h20"/><path d="M12 2a15 15 0 010 20 15 15 0 010-20z"/></svg></div><h3>100% en tu computador</h3><p>Funciona sin internet. Los datos del colegio nunca salen de tu equipo. Ábrelo una vez y úsalo todo el día.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pad wrap" id="como">
+    <div class="sec-head"><span class="eyebrow">Cómo funciona</span><h2 style="margin-top:14px">Del dato al horario, en tres pasos.</h2></div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Carga los datos</h3><p>Docentes, materias, salones, grupos y cargas académicas. Desde un archivo de Excel o a mano. Viene con un colegio de ejemplo para empezar.</p></div>
+      <div class="step"><div class="n">2</div><h3>Genera</h3><p>Un clic. El motor arma el horario respetando todas las reglas y minimizando las horas muertas. En segundos lo tienes listo.</p></div>
+      <div class="step"><div class="n">3</div><h3>Revisa y comparte</h3><p>Míralo por grupo o por docente, ajústalo si quieres, y expórtalo a imagen o impresión para repartirlo.</p></div>
+    </div>
+  </section>
+
+  <section class="pad wrap">
+    <div class="callout">
+      <div class="txt">
+        <h2>Química al laboratorio. Cada materia a su lugar.</h2>
+        <p>Define qué tipos de salón tiene tu colegio y en cuáles puede ir cada materia. El programa asigna laboratorio, sala de sistemas o cancha sin pasarse de la cantidad disponible, y arma las clases por bloques de horas seguidas cuando hace falta.</p>
+      </div>
+      <Image src={docentes2} alt="Estudiantes en el laboratorio de química" width={720} loading="lazy" />
+    </div>
+  </section>
+
+  <section class="pad" id="faq" style="background:var(--bg-soft);border-top:1px solid var(--line)">
+    <div class="wrap" style="max-width:820px">
+      <div class="sec-head" style="margin:0 auto 36px;text-align:center"><h2>Preguntas frecuentes</h2></div>
+      {faqs.map((f, i) => (
+        <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>
+      ))}
+    </div>
+  </section>
+
+  <section class="pad wrap" id="descargar">
+    <div class="final">
+      <h2>Descarga Horarios Escolares</h2>
+      <p>Arma el horario de tu colegio sin choques y sin pelear con Excel. Gratis, sin internet, sin complicaciones.</p>
+      <a class="btn btn-primary" href={product.downloadUrl}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+        Descargar para Windows
+      </a>
+      <small>Archivo único · {product.exeSize} · No requiere instalación</small>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="brand" style="font-size:16px"><span class="mark" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span>Horarios Escolares</div>
+      <span>Un producto de <a href={product.brandUrl} style="color:var(--ink);font-weight:700">{product.brand}</a> · Hecho en Colombia · <a href={product.reportUrl} style="color:var(--muted)">Reportar un problema</a></span>
+    </div>
+  </footer>
+</Base>
