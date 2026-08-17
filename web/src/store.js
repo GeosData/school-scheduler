@@ -161,6 +161,41 @@ export const useStore = create((set, get) => ({
     };
   },
 
+  preflight() {
+    const s = get();
+    const days = (s.grid.days || []).length;
+    const P = Number(s.grid.periodsPerDay) || 0;
+    const slots = days * P;
+    const allowFree = s.grid.allowFreePeriods !== false;
+    const hoursByGroup = {}, loadByTeacher = {};
+    s.tasks.forEach((t) => {
+      const w = Number(t.weekly) || 0;
+      if (t.group) hoursByGroup[t.group] = (hoursByGroup[t.group] || 0) + w;
+      if (t.teacher) loadByTeacher[t.teacher] = (loadByTeacher[t.teacher] || 0) + w;
+    });
+    const groups = s.groups.filter(Boolean).map((g) => {
+      const hours = hoursByGroup[g] || 0;
+      const diff = slots - hours;
+      let level = "ok", msg;
+      if (hours === 0) { level = "warn"; msg = "sin cargas asignadas"; }
+      else if (diff < 0) { level = "error"; msg = `faltan ${-diff} franjas (más horas que espacios en la jornada)`; }
+      else if (diff === 0) { msg = "cuadra exacto, jornada llena"; }
+      else if (!allowFree) { level = "error"; msg = `sobran ${diff} franjas y "horas libres" está apagado: no cuadra`; }
+      else { level = "info"; msg = `${diff} ${diff === 1 ? "hora libre" : "horas libres"} por semana (sale más temprano algunos días)`; }
+      return { group: g, hours, slots, level, msg };
+    });
+    const teachers = s.teachers.filter((t) => t.name).map((t) => {
+      const naSet = t.notAfterPeriod !== "" && t.notAfterPeriod != null;
+      const perDay = naSet ? Math.min(Number(t.notAfterPeriod), P) : P;
+      const maxDay = t.maxHoursPerDay ? Number(t.maxHoursPerDay) : perDay;
+      const cap = Math.min(perDay, maxDay) * days;
+      const load = loadByTeacher[t.name] || 0;
+      return { name: t.name, load, cap, over: load > cap };
+    });
+    return { slots, days, P, allowFree, groups, teachers,
+      errors: groups.filter((g) => g.level === "error").length + teachers.filter((t) => t.over).length };
+  },
+
   async solve(timeLimit = 30, _retried = false) {
     set({ solving: true, error: "", result: null });
     const cfg = get().buildConfig();

@@ -358,33 +358,86 @@ export function Preferencias() {
   );
 }
 
+function Badge({ kind, children }) {
+  const styles = { ok: "bg-[#e7f6ee] text-accent-dark", info: "bg-[#e7effc] text-primary-dark", error: "bg-amber-50 text-danger border border-amber-300", warn: "bg-slate-100 text-muted" };
+  return <span className={"rounded-full px-2.5 py-1 text-xs font-semibold " + (styles[kind] || styles.ok)}>{children}</span>;
+}
+
 export function Generar() {
-  const { solve, solving, error, result, subjects, rooms, teachers, groups, tasks } = useStore();
-  const checks = [
-    { label: "Salones", n: rooms.length },
-    { label: "Materias", n: subjects.length },
-    { label: "Docentes", n: teachers.length },
-    { label: "Grupos", n: groups.length },
-    { label: "Cargas académicas", n: tasks.length },
+  const { solve, solving, error, result, subjects, rooms, teachers, groups, tasks, preflight, setView } = useStore();
+  const counts = [
+    { label: "Salones", n: rooms.length, view: "salones" },
+    { label: "Materias", n: subjects.length, view: "materias" },
+    { label: "Docentes", n: teachers.length, view: "docentes" },
+    { label: "Grupos", n: groups.length, view: "grupos" },
+    { label: "Cargas académicas", n: tasks.length, view: "cargas" },
   ];
-  const ready = checks.every((c) => c.n > 0);
+  const hasData = counts.every((c) => c.n > 0);
+  const pf = preflight();
+  const gErr = pf.groups.filter((g) => g.level === "error");
+  const gWarn = pf.groups.filter((g) => g.level === "warn");
+  const gFree = pf.groups.filter((g) => g.level === "info");
+  const gExact = pf.groups.filter((g) => g.level === "ok" && g.hours > 0);
+  const tOver = pf.teachers.filter((t) => t.over);
+  const ready = hasData && pf.errors === 0;
+
   return (
     <section className="card">
-      <Head title="Generar horario" hint="El motor arma el horario respetando todas las restricciones y minimizando huecos." />
-      <div className="mb-4 rounded-xl border border-line bg-[#fbfdff] p-4">
-        <p className="mb-2 text-sm font-semibold text-muted">Antes de generar necesitas:</p>
-        <div className="space-y-1.5">
-          {checks.map((c) => (
-            <div key={c.label} className="flex items-center gap-2 text-sm">
-              <span className={"grid h-5 w-5 place-items-center rounded-full text-xs font-bold " + (c.n > 0 ? "bg-accent text-white" : "bg-slate-200 text-muted")}>{c.n > 0 ? "✓" : "!"}</span>
-              <span className={c.n > 0 ? "text-ink" : "text-muted"}>{c.label}: <b>{c.n}</b></span>
-            </div>
-          ))}
+      <Head title="Generar horario" hint="Antes de generar, la app revisa que la carga cuadre con la jornada y que ningún docente supere su horario disponible. El botón se activa solo cuando todo cuadra." />
+
+      {!hasData ? (
+        <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
+          <p className="mb-2 text-sm font-semibold text-ink">Faltan datos del colegio:</p>
+          <div className="space-y-1.5">
+            {counts.map((c) => (
+              <button key={c.label} onClick={() => setView(c.view)} className="flex w-full items-center gap-2 text-left text-sm hover:underline">
+                <span className={"grid h-5 w-5 place-items-center rounded-full text-xs font-bold " + (c.n > 0 ? "bg-accent text-white" : "bg-slate-200 text-muted")}>{c.n > 0 ? "✓" : "!"}</span>
+                <span className={c.n > 0 ? "text-ink" : "text-muted"}>{c.label}: <b>{c.n}</b></span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-sm text-muted">Complétalos en las secciones del menú, o usa Importar Excel.</p>
         </div>
-      </div>
+      ) : (
+        <div className="mb-4 space-y-3">
+          <div className="rounded-xl border border-line bg-[#fbfdff] p-3 text-sm text-ink">
+            Jornada: <b>{pf.P} horas/día × {pf.days} días = {pf.slots} espacios</b> por grupo.
+          </div>
+
+          <div className="rounded-xl border border-line p-4">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <span className="text-sm font-semibold text-ink">Grupos</span>
+              {gExact.length > 0 && <Badge kind="ok">{gExact.length} cuadran exacto</Badge>}
+              {gFree.length > 0 && <Badge kind="info">{gFree.length} con horas libres</Badge>}
+              {gErr.length > 0 && <Badge kind="error">{gErr.length} con problema</Badge>}
+              {gWarn.length > 0 && <Badge kind="warn">{gWarn.length} sin cargas</Badge>}
+            </div>
+            {[...gErr, ...gWarn].length > 0 && (
+              <ul className="space-y-1 text-sm text-danger">
+                {[...gErr, ...gWarn].map((g) => <li key={g.group}>• <b>{g.group}</b> ({g.hours}h): {g.msg}</li>)}
+              </ul>
+            )}
+            {gErr.length === 0 && gWarn.length === 0 && gFree.length > 0 && (
+              <p className="text-xs text-muted">Las horas que sobran se acomodan según el interruptor <b>horas libres</b> en <button className="underline" onClick={() => setView("rejilla")}>Jornada y horas</button>.</p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-line p-4">
+            <p className="mb-1 text-sm font-semibold text-ink">Docentes ({pf.teachers.length})</p>
+            {tOver.length === 0 ? (
+              <p className="text-sm text-accent-dark">Todos caben en su horario disponible.</p>
+            ) : (
+              <ul className="space-y-1 text-sm text-danger">
+                {tOver.map((t) => <li key={t.name}>• <b>{t.name}</b>: {t.load}h asignadas, pero solo caben {t.cap}h en su horario (revisa su tope o baja su carga).</li>)}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+
       <button className="btn btn-accent" onClick={() => solve(30)} disabled={solving || !ready}>{solving ? "Armando el horario…" : "Generar horario"}</button>
+      {hasData && !ready && <p className="mt-2 text-sm text-danger">Corrige los puntos en rojo para poder generar.</p>}
       {solving && <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" /> Armando el horario sin choques, esto puede tomar unos segundos…</p>}
-      {!ready && <p className="mt-2 text-sm text-muted">Faltan datos. Complétalos en las secciones del menú, o usa Importar Excel.</p>}
       {error && (
         <div className="mt-4 whitespace-pre-line rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-ink">{error}</div>
       )}

@@ -3,7 +3,7 @@ import sys
 import math
 
 GRADES = [6, 7, 8, 9, 10, 11]
-GROUPS_PER_GRADE = 1
+GROUPS_PER_GRADE = 3
 PERIODS_PER_DAY = 6
 BREAK_AFTER = [2]
 TEACHER_CAP = 24

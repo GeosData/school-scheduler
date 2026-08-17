@@ -24,11 +24,18 @@ function computeTimes(result) {
 }
 
 export default function Timetable() {
-  const { result, setView, moveClass, canMoveClass } = useStore();
+  const { result, solving, setView, moveClass, canMoveClass } = useStore();
   const [mode, setMode] = useState("group");
   const [sel, setSel] = useState(null);
   const [picked, setPicked] = useState(null);
 
+  if (solving) {
+    return (
+      <section className="card text-center text-muted">
+        <p className="flex items-center justify-center gap-2 py-6"><span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-primary" /> Generando el horario… en colegios grandes puede tardar unos segundos. No cierres la aplicación.</p>
+      </section>
+    );
+  }
   if (!result) {
     return (
       <section className="card text-center text-muted">
