@@ -8,9 +8,6 @@
      una app de uso prolongado, landing es una pagina de venta que necesita blanco puro de base. */
   --bg:#ffffff; --bg-soft:#f5f8fd; --band:#16233d;
   --shadow:0 24px 60px -30px rgba(15,27,51,.4);
-  /* Tokens nuevos: promovidos desde hex crudo repetido */
-  /* accent-hover derivado de accent-dark (no #128a3e crudo): color-mix garantiza que el hover
-     siempre sea mas oscuro que accent-dark, preservando el ratio WCAG AA (fix ux-audit 2026-09-05) */
   --accent-hover:color-mix(in srgb, var(--accent-dark) 85%, black); --primary-soft:#e9eefb;
   --danger-soft-bg:#fff4f4; --danger-soft-border:#f3c9c9; --danger-text:#b23b3b;
   /* Escala de radios alineada a Tailwind (misma que web/): sm=xl(12px), DEFAULT=2xl(16px, igual a .card de web), lg=3xl(24px) */

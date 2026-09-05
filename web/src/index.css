@@ -20,7 +20,6 @@
   .btn { @apply inline-flex items-center gap-2 rounded-full px-4 py-2.5 font-semibold transition; }
   .btn:disabled { @apply cursor-not-allowed opacity-50; }
   .btn-primary { @apply bg-primary text-white hover:bg-primary-dark; }
-  /* fix WCAG AA 2026-09-05: bg-accent plano fallaba 3.30:1 con texto blanco, accent-dark da 5.02:1 */
   .btn-accent { @apply bg-accent-dark text-white hover:brightness-90; }
   .btn-ghost { @apply bg-slate-100 text-primary-dark hover:bg-slate-200; }
   .input { @apply w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary; }
