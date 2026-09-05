@@ -9,7 +9,7 @@ shared:
     primary-dark: "#1a3691"
     accent: "#16a34a"
     accent-soft: "#e7f6ee"
-    accent-hover: "#128a3e"
+    accent-hover: "color-mix(in srgb, var(--accent-dark) 85%, black)"
     primary-soft: "#e9eefb"
     danger: "#dc2626"
     danger-soft-bg: "#fff4f4"
@@ -76,7 +76,7 @@ Una sola familia en ambas superficies: **Lexend** (`web/` estático, `landing/` 
 - **`web/` `.btn-accent`:** fill `accent`, mismo patrón hover/disabled.
 - **`web/` `.btn-ghost`:** fondo `slate-100`, texto `primary-dark`, hover `slate-200`.
 - **`web/` `.input`:** borde `line`, focus → `ring-2 ring-primary` (focus-visible cubierto).
-- **`landing/` `.btn-primary`:** fill `accent`, sombra verde, hover `#128a3e` (hex suelto, no token) + `translateY(-1px)`. No tiene estado disabled documentado (landing no tiene formularios con submit deshabilitable salvo `report-card button`, que sí hereda `.btn` base).
+- **`landing/` `.btn-primary`:** fill `accent-dark` (fix WCAG AA 2026-09-05: `accent` plano fallaba 3.30:1 con texto blanco, `accent-dark` da 5.02:1), sombra verde, hover vía `accent-hover` (derivado con `color-mix`, siempre más oscuro que `accent-dark`) + `translateY(-1px)`. `.report-card button` (formulario de reporte) recibió el mismo fix. No tiene estado disabled documentado.
 - **`landing/` `.btn-ghost`:** fondo blanco, borde `line`, hover borde `primary`.
 - **Falta en ambos:** estado `loading` explícito — no se encontró spinner/skeleton en el CSS auditado.
 

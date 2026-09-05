@@ -1,7 +1,7 @@
 :root{
   /* Tokens compartidos con web/tailwind.config.js — mismo valor por rol (unificado 2026-09-05) */
   --ink:#16233d; --muted:#51607a; --line:#dde5f0;
-  --primary:#1e40af; --primary-dark:#1a3691; --accent:#16a34a; --accent-soft:#e7f6ee;
+  --primary:#1e40af; --primary-dark:#1a3691; --accent:#16a34a; --accent-dark:#15803d; --accent-soft:#e7f6ee;
   --danger:#dc2626;
   /* Tokens propios de landing (excepcion documentada, ver DESIGN.md Drift conocido): bg blanco puro
      es intencional para el sistema de tarjetas blancas sobre fondo — web usa bg tintado porque es
@@ -9,7 +9,9 @@
   --bg:#ffffff; --bg-soft:#f5f8fd; --band:#16233d;
   --shadow:0 24px 60px -30px rgba(15,27,51,.4);
   /* Tokens nuevos: promovidos desde hex crudo repetido */
-  --accent-hover:#128a3e; --primary-soft:#e9eefb;
+  /* accent-hover derivado de accent-dark (no #128a3e crudo): color-mix garantiza que el hover
+     siempre sea mas oscuro que accent-dark, preservando el ratio WCAG AA (fix ux-audit 2026-09-05) */
+  --accent-hover:color-mix(in srgb, var(--accent-dark) 85%, black); --primary-soft:#e9eefb;
   --danger-soft-bg:#fff4f4; --danger-soft-border:#f3c9c9; --danger-text:#b23b3b;
   /* Escala de radios alineada a Tailwind (misma que web/): sm=xl(12px), DEFAULT=2xl(16px, igual a .card de web), lg=3xl(24px) */
   --radius-sm:12px; --radius:16px; --radius-lg:24px; --radius-full:9999px;
@@ -21,7 +23,7 @@ img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;border-radius:var(--radius-sm);padding:14px 22px;font-size:16px;transition:.18s;border:1px solid transparent;cursor:pointer}
-.btn-primary{background:var(--accent);color:#fff;box-shadow:0 10px 24px -12px rgba(22,163,74,.7)}
+.btn-primary{background:var(--accent-dark);color:#fff;box-shadow:0 10px 24px -12px rgba(22,163,74,.7)}
 .btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px)}
 .btn-ghost{background:#fff;color:var(--primary-dark);border-color:var(--line)}
 .btn-ghost:hover{border-color:var(--primary)}
@@ -129,7 +131,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;
 .report-card textarea:focus,.report-card input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
 .tech{margin-top:16px;font-size:13px;color:var(--muted);background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 14px;display:none}
 .tech code{word-break:break-word}
-.report-card button{margin-top:24px;width:100%;background:var(--accent);color:#fff;border:0;border-radius:var(--radius-sm);padding:15px;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:.18s}
+.report-card button{margin-top:24px;width:100%;background:var(--accent-dark);color:#fff;border:0;border-radius:var(--radius-sm);padding:15px;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:.18s}
 .report-card button:hover{background:var(--accent-hover)}
 .report-foot{margin-top:20px;text-align:center;font-size:14px;color:var(--muted)}
 .report-foot a{color:var(--primary)}
