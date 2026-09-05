@@ -1,16 +1,11 @@
 :root{
-  /* Tokens compartidos con web/tailwind.config.js — mismo valor por rol (unificado 2026-09-05) */
   --ink:#16233d; --muted:#51607a; --line:#dde5f0;
   --primary:#1e40af; --primary-dark:#1a3691; --accent:#16a34a; --accent-dark:#15803d; --accent-soft:#e7f6ee;
   --danger:#dc2626;
-  /* Tokens propios de landing (excepcion documentada, ver DESIGN.md Drift conocido): bg blanco puro
-     es intencional para el sistema de tarjetas blancas sobre fondo — web usa bg tintado porque es
-     una app de uso prolongado, landing es una pagina de venta que necesita blanco puro de base. */
   --bg:#ffffff; --bg-soft:#f5f8fd; --band:#16233d;
   --shadow:0 24px 60px -30px rgba(15,27,51,.4);
   --accent-hover:color-mix(in srgb, var(--accent-dark) 85%, black); --primary-soft:#e9eefb;
   --danger-soft-bg:#fff4f4; --danger-soft-border:#f3c9c9; --danger-text:#b23b3b;
-  /* Escala de radios alineada a Tailwind (misma que web/): sm=xl(12px), DEFAULT=2xl(16px, igual a .card de web), lg=3xl(24px) */
   --radius-sm:12px; --radius:16px; --radius-lg:24px; --radius-full:9999px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
