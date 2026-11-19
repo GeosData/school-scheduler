@@ -12,3 +12,4 @@ dist/
 build/
 *.spec
 horarios.db
+.wrangler/

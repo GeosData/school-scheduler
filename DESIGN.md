@@ -39,6 +39,11 @@ landing:
       usage: "toda la landing"
 ---
 
+## Reglas transversales (leer ANTES de tocar este archivo o la UI)
+
+- **Técnicas (WCAG, tap targets, escala tipográfica, motion):** `memory/jotive/Frontend-Design-Standards.md`
+- **Gusto/rechazos de Josse (set-IA-default, botones pill-flat, iconos, clichés de dashboard):** `memory/jotive/Estilo-Gustos-Josse.md`
+
 ## Brand & Style
 
 Herramienta escolar para generar horarios — dos superficies con marca compartida pero implementación separada: **`web/`** = la app (React+Vite+Tailwind, donde el usuario arma/edita el horario) y **`landing/`** = marketing (Astro, vende el producto antes del login). Tono: confiable, ordenado, "software escolar serio" — azul institucional (`primary`) como color de marca/estructura, verde (`accent`) reservado para confirmación/éxito/CTA principal. Nada de esquinas rectas ni monospace-identidad (a diferencia de geosdata-com "taller") — este producto usa el registro **corporativo-amigable estándar**: radios generosos, sombras suaves, gradientes sutiles en hero/CTA final.
